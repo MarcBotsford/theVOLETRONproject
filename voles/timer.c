@@ -50,7 +50,11 @@ timerr_t TIMER_init_raw(uint32_t ccr, uint8_t devider,tim_t clk_chanel){
         taCCR6 += 0x00000200;
     }
 
-*taCTL |= BIT9;
+    //set the clock source to SM clock
+*taCTL |= TIM_SMCLK;
+    if(!(devider == 1 || devider ==2 || devider == 4 || devider == 8)){
+        return timer_invalid_devider;
+    }
 
 
     return timer_no_error;

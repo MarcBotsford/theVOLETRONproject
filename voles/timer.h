@@ -27,13 +27,13 @@
 void* callback_A[6];
 void* callback_32;
 
+#endif
 
 #define TIM_TAxCLK (0x0000)
 #define TIM_ACLK   (0x0100)
 #define TIM_SMCLK  (0x0200)
 #define TIM_INCLK  (0x0300)
 
-#endif
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  *
  * custom data types
@@ -56,7 +56,8 @@ typedef enum tim_err{
     began_uninitialized_clock,
     pause_uninitialized_clodk,
     began_running_clock,
-    pause_paused_clock
+    pause_paused_clock,
+    timer_invalid_devider
 }timerr_t;
 
 typedef enum tim_id{
