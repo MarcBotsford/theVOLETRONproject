@@ -40,16 +40,6 @@ static uint32_t doors_allocated;
 #define DOOR_AVAILABLE (0x0)
 #define DOOR_RESERVED (0x1)
 
-TID_t allocate_door(){
-   for(){
-   if (tempdoor % 2 ==  DOOR_AVAILABLe)
-   {
 
-   }
-   tempdoor= doors_allocate >> 1;
-   }
-   // i which timer availble
-   }
-}
 
 #endif /* DOORS_H_ */

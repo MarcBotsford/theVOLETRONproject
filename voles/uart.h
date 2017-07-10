@@ -15,7 +15,7 @@
  *
  *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 typedef enum uart_err{
-    no_error,
+    uart_no_error,
     transmit_failure,
     recieve_failure
 }uarterr_t;

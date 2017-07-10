@@ -5,18 +5,15 @@
 //****************************************************************************
 
 #include "msp.h"
-#include "doors.h"
-#include "VI.h
-#include "servo_controller.h"
-#include "pwm.h"
-#include "timer.h"
-#include "rtc.h
-#include "uart.h"
-#include "beambreak.h"
+#include "voles/voles.h"
 
 void main(void)
 {
 	
     WDTCTL = WDTPW | WDTHOLD;           // Stop watchdog timer
+
+    TIMER_init_raw(0,0,TA3);
+
+    while(1);
 	
 }
