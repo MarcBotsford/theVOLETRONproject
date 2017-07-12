@@ -7,88 +7,152 @@
 #include "msp.h"
 #include "timer.h"
 
-timerr_t TIMER_init_raw(uint32_t ccr, uint8_t devider,tim_t clk_chanel){
-    hreg16_t taCTL   = 0x40000000;
+timerr_t TIMER_config_raw(uint16_t ccr, uint8_t devider, uint32_t clk_chanel, uint8_t ccr_chanel){
+    timerr_t dev_err;
 
-    hreg16_t taCCTL0 = 0x40000002;
-    hreg16_t taCCTL1 = 0x40000004;
-    hreg16_t taCCTL2 = 0x40000006;
-    hreg16_t taCCTL3 = 0x40000008;
-    hreg16_t taCCTL4 = 0x4000000A;
-    hreg16_t taCCTL5 = 0x4000000C;
-    hreg16_t taCCTL6 = 0x4000000E;
-
-    hreg16_t taCCR0 = 0x40000012;
-    hreg16_t taCCR1 = 0x40000014;
-    hreg16_t taCCR2 = 0x40000016;
-    hreg16_t taCCR3 = 0x40000018;
-    hreg16_t taCCR4 = 0x4000001A;
-    hreg16_t taCCR5 = 0x4000001C;
-    hreg16_t taCCR6 = 0x4000001E;
-
-
-
-    uint8_t i;
-
-    for(i=0; i < clk_chanel; i++){
-        taCTL += 0x00000200;
-
-        taCCTL0 += 0x00000200;
-        taCCTL1 += 0x00000200;
-        taCCTL2 += 0x00000200;
-        taCCTL3 += 0x00000200;
-        taCCTL4 += 0x00000200;
-        taCCTL5 += 0x00000200;
-        taCCTL6 += 0x00000200;
-
-        taCCR0 += 0x00000200;
-        taCCR1 += 0x00000200;
-        taCCR2 += 0x00000200;
-        taCCR3 += 0x00000200;
-        taCCR4 += 0x00000200;
-        taCCR5 += 0x00000200;
-        taCCR6 += 0x00000200;
+    if(ccr_chanel > 6){
+        return timer_invalid_ccr_chanel;
     }
 
-    //set the clock source to SM clock
-*taCTL |= TIM_SMCLK;
-    if(!(devider == 1 || devider ==2 || devider == 4 || devider == 8)){
+
+        //set clock devider
+    dev_err = TIMER_load_devider(devider, clk_chanel);
+
+    if (dev_err != timer_no_error){
+        return dev_err;
+    }
+        //set ccr value
+    TIMER_AG(clk_chanel)->CCR[ccr_chanel] = ccr;
+        //use smclk and enable interrupts
+    TIMER_AG(clk_chanel)->CTL &= ~(TIMER_A_CTL_SSEL_MASK);
+    TIMER_AG(clk_chanel)->CTL |= TIMER_A_CTL_SSEL__SMCLK | TIMER_A_CTL_IE;
+        //enable interrupts
+    TIMER_AG(clk_chanel)->CCTL[ccr_chanel] |= TIMER_A_CCTLN_CCIE;
+
+
+
+
+    return timer_no_error;
+}
+
+timerr_t TIMER_config(uint32_t period, uint32_t chanel, uint8_t ccr_chanel){
+        //typechecking
+    if(ccr_chanel > 6){
+        return timer_invalid_ccr_chanel;
+    }
+    if(!(clk_chanel == TA0 || clk_chanel == TA1 || clk_chanel == TA2 || clk_chanel == TA3)){
+        return timer_invalid_chanel;
+    }
+
+
+
+
+    return timer_no_error;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+timerr_t TIMER_load_devider(uint8_t devider, uint32_t clk_chanel){
+
+    if(!(devider == TIMER_DEV_1 || devider == TIMER_DEV_2 || devider == TIMER_DEV_4 || devider == TIMER_DEV_8)){
         return timer_invalid_devider;
     }
+    if(!(clk_chanel == TA0 || clk_chanel == TA1 || clk_chanel == TA2 || clk_chanel == TA3)){
+        return timer_invalid_chanel;
+    }
 
+
+    TIMER_AG(clk_chanel)->CTL |= (devider << 6);
 
     return timer_no_error;
 }
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
 
 timerr_t TIMER_begin(tim_t clk_chanel){
+    if(!(clk_chanel == TA0 || clk_chanel == TA1 || clk_chanel == TA2 || clk_chanel == TA3)){
+        return timer_invalid_chanel;
+    }
+
+    TIMER_AG(clk_chanel)->CTL &= ~(TIMER_A_CTL_MC_MASK);
+    TIMER_AG(clk_chanel)->CTL |= TIMER_A_CTL_MC__UP;
+
 
     return timer_no_error;
 }
 
-timerr_t TIMER_pause(tim_t chanel){
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+timerr_t TIMER_pause(tim_t clk_chanel){
+
+    if(!(clk_chanel == TA0 || clk_chanel == TA1 || clk_chanel == TA2 || clk_chanel == TA3)){
+        return timer_invalid_chanel;
+    }
+
+    TIMER_AG(clk_chanel)->CTL &= ~(TIMER_A_CTL_MC_MASK);
+    TIMER_AG(clk_chanel)->CTL |= TIMER_A_CTL_MC__STOP;
 
     return timer_no_error;
 }
 
-timerr_t TIMER_reset_raw(tim_t chanel, uint32_t ccr){
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+timerr_t TIMER_reset_raw(tim_t chanel, uint32_t ccr, uint8_t devider, uint8_t ccr_chanel){
 
     return timer_no_error;
 }
 
-timerr_t TIMER_set_callback(tim_t chanel, void(*callback)){
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+timerr_t TIMER_set_callback(tim_t clk_chanel,uint8_t ccr_chanel, void(*callback)){
+        //type checking
+    if(!(clk_chanel == TA0 || clk_chanel == TA1 || clk_chanel == TA2 || clk_chanel == TA3)){
+        return timer_invalid_chanel;
+    }
+
+    if(ccr_chanel > 6){
+        return timer_invalid_ccr_chanel;
+    }
+
+
+    switch(clk_chanel){
+    case TA0:
+        callback_A0[ccr_chanel] = callback;
+        break;
+    case TA1:
+        callback_A1[ccr_chanel] = callback;
+        break;
+    case TA2:
+        callback_A2[ccr_chanel] = callback;
+        break;
+    case TA3:
+        callback_A3[ccr_chanel] = callback;
+        break;
+    }
 
     return timer_no_error;
 }
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
 
 timid_t TIMER_request(uint32_t period, void(*callback)){
 
     return task0;
 }
 
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
 timid_t TIMER_request_repeat(uint32_t period, void(*callback), uint32_t reps){
 
     return task0;
 }
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 timerr_t TIMER_kill(uint8_t taskid){
 

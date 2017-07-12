@@ -7,6 +7,12 @@
 #include "msp.h"
 #include "voles/voles.h"
 
+
+void (*callback_A0[6]);
+void (*callback_A1[6]);
+void (*callback_A2[6]);
+void (*callback_A3[6]);
+
 void main(void)
 {
     timerr_t a;
@@ -16,10 +22,7 @@ void main(void)
 	
     WDTCTL = WDTPW | WDTHOLD;           // Stop watchdog timer
 
-    a = TIMER_init_raw(0,0,TA3);
-    b = TIMER_init_raw(0,1,TA3);
-    c = TIMER_init_raw(0,10,TA3);
-    d = TIMER_init_raw(0,6,TA3);
+    a = TIMER_load_devider(TIMER_DEV_4,TA3);
 
     while(1);
 	
