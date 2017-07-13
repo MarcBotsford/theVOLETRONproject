@@ -22,7 +22,7 @@ void main(void)
 	
     WDTCTL = WDTPW | WDTHOLD;           // Stop watchdog timer
 
-    a = TIMER_load_devider(TIMER_DEV_4,TA3);
+    a = TIMER_config_raw(123,TIMER_DEV_8, TA1, 3);
 
     while(1);
 	

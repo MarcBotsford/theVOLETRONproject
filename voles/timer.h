@@ -65,12 +65,24 @@ typedef enum tim_id{
     task2
 }timid_t;
 
+typedef struct _clk_deviders{
+    uint8_t ID4;
+    uint8_t EX;
+}clkDeviders_t;
+
 typedef volatile uint16_t* hreg16_t;
 
-#define TIMER_DEV_8 0x03
-#define TIMER_DEV_4 0x02
-#define TIMER_DEV_2 0x01
-#define TIMER_DEV_1 0x00
+#define TIMER_DEV_8 (0x03)
+#define TIMER_DEV_4 (0x02)
+#define TIMER_DEV_2 (0x01)
+#define TIMER_DEV_1 0x00)
+
+#define TIMER_DEV_5 (5)
+#define TIMER_DEV_7 (7)
+#define TIMER_DEV_10 (10)
+#define TIMER_DEV_16 (16)
+#define TIMER_DEV_32 (32)
+#define TIMER_DEV_64 (64)
 
 
 #if 0
@@ -87,6 +99,7 @@ uint8_t timer_available = 0;
 
 timerr_t TIMER_cofig_raw(uint16_t ccr, uint8_t devider,tim_t clk_chanel, uint8_t ccr_chanel);
 timerr_t TIMER_config(uint32_t period, tim_t clk_chanel,uint8_t ccr_chanel);
+timerr_t TIMER_config_ccr_raw(uint16_t ccr, tim_t clk_chanel, uint8_t ccr_chanel);
 timerr_t TIMER_begin(tim_t clk_chanel);
 timerr_t TIMER_pause(tim_t chanel);
 timerr_t TIMER_reset_raw(tim_t chanel, uint32_t ccr, uint8_t devider, uint8_t ccr_chanel);
@@ -97,6 +110,6 @@ timerr_t TIMER_kill(uint8_t taskid);
 
 
 
-
+uint32_t TIMER_calculate(uint32_t period);
 
 #endif /* TIMER_H_ */

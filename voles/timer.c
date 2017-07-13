@@ -35,7 +35,7 @@ timerr_t TIMER_config_raw(uint16_t ccr, uint8_t devider, uint32_t clk_chanel, ui
     return timer_no_error;
 }
 
-timerr_t TIMER_config(uint32_t period, uint32_t chanel, uint8_t ccr_chanel){
+timerr_t TIMER_config(uint32_t period, uint32_t clk_chanel, uint8_t ccr_chanel){
         //typechecking
     if(ccr_chanel > 6){
         return timer_invalid_ccr_chanel;
@@ -45,6 +45,23 @@ timerr_t TIMER_config(uint32_t period, uint32_t chanel, uint8_t ccr_chanel){
     }
 
 
+    return timer_no_error;
+}
+
+
+
+timerr_t TIMER_config_ccr_raw(uint16_t ccr, tim_t clk_chanel, uint8_t ccr_chanel){
+        //type checking
+    if(ccr_chanel > 6){
+
+        return timer_invalid_ccr_chanel;
+    }
+    if(!(clk_chanel == TA0 || clk_chanel == TA1 || clk_chanel == TA2 || clk_chanel == TA3)){
+        return timer_invalid_chanel;
+    }
+
+    TIMER_AG(clk_chanel)->CCTL[ccr_chanel] |= TIMER_A_CCTLN_CCIE;
+    TIMER_AG(clk_chanel)->CCR[ccr_chanel] = ccr;
 
 
     return timer_no_error;
@@ -53,16 +70,62 @@ timerr_t TIMER_config(uint32_t period, uint32_t chanel, uint8_t ccr_chanel){
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 timerr_t TIMER_load_devider(uint8_t devider, uint32_t clk_chanel){
-
-    if(!(devider == TIMER_DEV_1 || devider == TIMER_DEV_2 || devider == TIMER_DEV_4 || devider == TIMER_DEV_8)){
-        return timer_invalid_devider;
-    }
     if(!(clk_chanel == TA0 || clk_chanel == TA1 || clk_chanel == TA2 || clk_chanel == TA3)){
         return timer_invalid_chanel;
     }
 
 
-    TIMER_AG(clk_chanel)->CTL |= (devider << 6);
+
+
+
+    if(devider <= 3 && devider >= 0){
+
+        TIMER_AG(clk_chanel)->CTL |= (devider << 6);
+        return timer_no_error;
+    }
+
+    switch(devider){
+    case TIMER_DEV_5:
+        TIMER_AG(clk_chanel)->CTL &= ~(TIMER_A_CTL_ID_MASK);
+        TIMER_AG(clk_chanel)->CTL |= TIMER_A_CTL_ID__1;
+
+        TIMER_AG(clk_chanel)->EX0 = 0x0004;
+        return timer_no_error;
+    case TIMER_DEV_7:
+        TIMER_AG(clk_chanel)->CTL &= ~(TIMER_A_CTL_ID_MASK);
+        TIMER_AG(clk_chanel)->CTL |= TIMER_A_CTL_ID__1;
+
+        TIMER_AG(clk_chanel)->EX0 = 0x0006;
+        return timer_no_error;
+    case TIMER_DEV_10:
+        TIMER_AG(clk_chanel)->CTL &= ~(TIMER_A_CTL_ID_MASK);
+        TIMER_AG(clk_chanel)->CTL |= TIMER_A_CTL_ID__2;
+
+        TIMER_AG(clk_chanel)->EX0 = 0x0004;
+        return timer_no_error;
+    case TIMER_DEV_16:
+        TIMER_AG(clk_chanel)->CTL &= ~(TIMER_A_CTL_ID_MASK);
+        TIMER_AG(clk_chanel)->CTL |= TIMER_A_CTL_ID__4;
+
+        TIMER_AG(clk_chanel)->EX0 = 0x0003;
+        return timer_no_error;
+    case TIMER_DEV_32:
+        TIMER_AG(clk_chanel)->CTL &= ~(TIMER_A_CTL_ID_MASK);
+        TIMER_AG(clk_chanel)->CTL |= TIMER_A_CTL_ID__8;
+
+        TIMER_AG(clk_chanel)->EX0 = 0x0003;
+        return timer_no_error;
+    case TIMER_DEV_64:
+        TIMER_AG(clk_chanel)->CTL &=~(TIMER_A_CTL_ID_MASK);
+        TIMER_AG(clk_chanel)->CTL |= TIMER_A_CTL_ID__8;
+
+        TIMER_AG(clk_chanel)->EX0 = 0x0007;
+        return timer_no_error;
+    default:
+        return timer_invalid_devider;
+    }
+
+
 
     return timer_no_error;
 }
@@ -107,7 +170,7 @@ timerr_t TIMER_reset_raw(tim_t chanel, uint32_t ccr, uint8_t devider, uint8_t cc
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-
+#if 0
 timerr_t TIMER_set_callback(tim_t clk_chanel,uint8_t ccr_chanel, void(*callback)){
         //type checking
     if(!(clk_chanel == TA0 || clk_chanel == TA1 || clk_chanel == TA2 || clk_chanel == TA3)){
@@ -137,6 +200,7 @@ timerr_t TIMER_set_callback(tim_t clk_chanel,uint8_t ccr_chanel, void(*callback)
     return timer_no_error;
 }
 
+#endif
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 
