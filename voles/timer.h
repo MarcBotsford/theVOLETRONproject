@@ -14,6 +14,9 @@
  *
  */
 
+
+// note to self, smclk frequency is 4MHz
+
 #ifndef TIMER_H_
 #define TIMER_H_
 
@@ -48,7 +51,7 @@ typedef enum timer_chanels{          //used mostly for internal functions to ide
 }tim_t;
 
 typedef enum tim_err{
-    timer_no_error,
+    timer_no_error = 0,
     began_uninitialized_clock,
     pause_uninitialized_clodk,
     began_running_clock,
@@ -65,17 +68,18 @@ typedef enum tim_id{
     task2
 }timid_t;
 
-typedef struct _clk_deviders{
-    uint8_t ID4;
-    uint8_t EX;
-}clkDeviders_t;
+typedef struct _clk_data{
+    uint8_t devider;
+    uint16_t CCR;
+    uint32_t cnt;
+}clkData_t;
 
 typedef volatile uint16_t* hreg16_t;
 
 #define TIMER_DEV_8 (0x03)
 #define TIMER_DEV_4 (0x02)
 #define TIMER_DEV_2 (0x01)
-#define TIMER_DEV_1 0x00)
+#define TIMER_DEV_1 (0x00)
 
 #define TIMER_DEV_5 (5)
 #define TIMER_DEV_7 (7)
@@ -93,23 +97,33 @@ uint8_t timer_available = 0;
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  *
+ * preprocessor macros
+ *
+ *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+#define CNT_PRD_MS 55.7056
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *
  * function definitions
  *
  *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-timerr_t TIMER_cofig_raw(uint16_t ccr, uint8_t devider,tim_t clk_chanel, uint8_t ccr_chanel);
+timerr_t TIMER_config_raw(uint16_t ccr, uint8_t devider,tim_t clk_chanel, uint8_t ccr_chanel);
 timerr_t TIMER_config(uint32_t period, tim_t clk_chanel,uint8_t ccr_chanel);
 timerr_t TIMER_config_ccr_raw(uint16_t ccr, tim_t clk_chanel, uint8_t ccr_chanel);
 timerr_t TIMER_begin(tim_t clk_chanel);
 timerr_t TIMER_pause(tim_t chanel);
 timerr_t TIMER_reset_raw(tim_t chanel, uint32_t ccr, uint8_t devider, uint8_t ccr_chanel);
-timerr_t TIMER_set_callback(tim_t chanel, void(*callback));                     //note to self: figure out if this syntax is even close to correct
+timerr_t TIMER_set_callback(tim_t chanel,uint8_t ccr_chanel, void (*callback)(void));                     //note to self: figure out if this syntax is even close to correct
 timid_t TIMER_request(uint32_t period, void(*callback));
 timid_t TIMER_request_repeat(uint32_t period, void(*callback), uint32_t reps);
 timerr_t TIMER_kill(uint8_t taskid);
 
+timerr_t TIMER_config_cnt_raw(uint16_t ccr, uint8_t devider,tim_t clk_chanel, uint8_t ccr_chanel, uint32_t cnt_gl);
+
+void TA1_N_IRQHandler(void);
 
 
-uint32_t TIMER_calculate(uint32_t period);
-
+clkData_t TIMER_calculate_deviders(uint32_t period);
 #endif /* TIMER_H_ */

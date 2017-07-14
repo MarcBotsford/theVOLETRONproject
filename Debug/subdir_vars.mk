@@ -8,6 +8,9 @@ SHELL = cmd.exe
 CMD_SRCS += \
 ../msp432p401r.cmd 
 
+LIB_SRCS += \
+../msp432p4xx_driverlib.lib 
+
 C_SRCS += \
 ../main.c \
 ../startup_msp432p401r_ccs.c \

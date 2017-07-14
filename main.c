@@ -6,24 +6,37 @@
 
 #include "msp.h"
 #include "voles/voles.h"
+#include "driverlib.h"
 
 
-void (*callback_A0[6]);
-void (*callback_A1[6]);
-void (*callback_A2[6]);
-void (*callback_A3[6]);
-
-void main(void)
-{
-    timerr_t a;
+    uint32_t a;
     timerr_t b;
     timerr_t c;
     timerr_t d;
-	
-    WDTCTL = WDTPW | WDTHOLD;           // Stop watchdog timer
 
-    a = TIMER_config_raw(123,TIMER_DEV_8, TA1, 3);
+    void test_callback(void);
+
+void main(void)
+{
+
+	
+    WDTCTL = WDTPW | WDTHOLD;
+
+    b = TIMER_config_raw(0xFFFF, TIMER_DEV_1, TA1, 0);
+
+
+    b = TIMER_set_callback(TA1,0, &test_callback);
+    TIMER_begin(TA1);
+
+    Interrupt_enableMaster();
+    Interrupt_enableInterrupt(INT_TA1_N);
 
     while(1);
 	
+}
+
+
+void test_callback(void){
+    a++;
+
 }
