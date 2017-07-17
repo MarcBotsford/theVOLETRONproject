@@ -13,6 +13,9 @@ voles/timer.obj: C:/ti/ccsv7/ccs_base/arm/include/CMSIS/core_cmFunc.h
 voles/timer.obj: C:/ti/ccsv7/ccs_base/arm/include/CMSIS/core_cmSimd.h
 voles/timer.obj: C:/ti/ccsv7/ccs_base/arm/include/system_msp432p401r.h
 voles/timer.obj: ../voles/timer.h
+voles/timer.obj: C:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.1.LTS/include/math.h
+voles/timer.obj: C:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.1.LTS/include/linkage.h
+voles/timer.obj: C:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.1.LTS/include/_defs.h
 
 ../voles/timer.c: 
 C:/ti/ccsv7/ccs_base/arm/include/msp.h: 
@@ -27,3 +30,6 @@ C:/ti/ccsv7/ccs_base/arm/include/CMSIS/core_cmFunc.h:
 C:/ti/ccsv7/ccs_base/arm/include/CMSIS/core_cmSimd.h: 
 C:/ti/ccsv7/ccs_base/arm/include/system_msp432p401r.h: 
 ../voles/timer.h: 
+C:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.1.LTS/include/math.h: 
+C:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.1.LTS/include/linkage.h: 
+C:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.1.LTS/include/_defs.h: 

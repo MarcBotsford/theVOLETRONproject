@@ -22,6 +22,9 @@ main.obj: ../voles/pwm.h
 main.obj: ../voles/rfid.h
 main.obj: ../voles/rtc.h
 main.obj: ../voles/timer.h
+main.obj: C:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.1.LTS/include/math.h
+main.obj: C:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.1.LTS/include/linkage.h
+main.obj: C:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.1.LTS/include/_defs.h
 main.obj: ../voles/uart.h
 main.obj: ../voles/VI.h
 main.obj: C:/ti/ccsv7/ccs_base/arm/include/msp432_driverlib_3_21_00_05/driverlib/MSP432P4xx/driverlib.h
@@ -78,6 +81,9 @@ C:/ti/ccsv7/ccs_base/arm/include/system_msp432p401r.h:
 ../voles/rfid.h: 
 ../voles/rtc.h: 
 ../voles/timer.h: 
+C:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.1.LTS/include/math.h: 
+C:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.1.LTS/include/linkage.h: 
+C:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.1.LTS/include/_defs.h: 
 ../voles/uart.h: 
 ../voles/VI.h: 
 C:/ti/ccsv7/ccs_base/arm/include/msp432_driverlib_3_21_00_05/driverlib/MSP432P4xx/driverlib.h: 

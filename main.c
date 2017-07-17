@@ -2,7 +2,7 @@
 //
 // MSP432 main.c template - Empty main
 //
-//****************************************************************************
+//*****************************************************************************
 
 #include "msp.h"
 #include "voles/voles.h"
@@ -16,12 +16,12 @@
 
     void test_callback(void);
 
-void main(void)
-{
+void main(void){
 
-	
+
     WDTCTL = WDTPW | WDTHOLD;
 
+    clkData_t datat;
     b = TIMER_config_raw(0xFFFF, TIMER_DEV_1, TA1, 0);
 
 
@@ -30,6 +30,9 @@ void main(void)
 
     Interrupt_enableMaster();
     Interrupt_enableInterrupt(INT_TA1_N);
+
+
+    TIMER_calculate_deviders_l(1000);
 
     while(1);
 	

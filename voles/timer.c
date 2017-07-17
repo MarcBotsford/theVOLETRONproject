@@ -80,7 +80,7 @@ timerr_t TIMER_config_raw(uint16_t ccr, uint8_t devider, uint32_t clk_chanel, ui
     return timer_no_error;
 }
 
-timerr_t TIMER_config(uint32_t period, tim_t clk_chanel, uint8_t ccr_chanel){
+timerr_t TIMER_config_l(uint32_t period, tim_t clk_chanel, uint8_t ccr_chanel){
         //typechecking
     if(ccr_chanel > 6){
         return timer_invalid_ccr_chanel;
@@ -105,19 +105,20 @@ timerr_t TIMER_config(uint32_t period, tim_t clk_chanel, uint8_t ccr_chanel){
 
 clkData_t TIMER_calculate_deviders_s(uint32_t period){
     clkData_t dat;
+    float error;
+
 
 }
 
 clkData_t TIMER_calculate_deviders_l(uint32_t period){
     clkData_t dat;
-        //
-        /*
-         * set cnt = floor(period / cnt_prt_ms)
-         * set ccr to 0xFFFF
-         * set devider to 64
-         *
-         */
 
+
+          dat.cnt = period / CNT_PRD_MS;
+          dat.CCR = 0xFFFF;
+          dat.devider = TIMER_DEV_64;
+
+    return dat;
 }
 
 
@@ -231,7 +232,15 @@ timerr_t TIMER_pause(tim_t clk_chanel){
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 
-timerr_t TIMER_reset_raw(tim_t chanel, uint32_t ccr, uint8_t devider, uint8_t ccr_chanel){
+timerr_t TIMER_reset_raw(tim_t clk_chanel, uint32_t ccr, uint8_t devider, uint8_t ccr_chanel){
+    if(!(clk_chanel == TA0 || clk_chanel == TA1 || clk_chanel == TA2 || clk_chanel == TA3)){
+        return timer_invalid_chanel;
+    }
+
+    TIMER_AG(clk_chanel)->CTL |= TACLR;
+
+    TIMER_config_raw(ccr, devider, clk_chanel, ccr_chanel);
+
 
     return timer_no_error;
 }
