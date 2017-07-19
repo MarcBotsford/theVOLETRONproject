@@ -8,7 +8,9 @@
 #ifndef BEAMBREAK_H_
 #define BEAMBREAK_H_
 
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#include <stdint.h>
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  *
  *prepocessor constants
  *
@@ -16,7 +18,8 @@
 
 #define BROKEN (0x01)
 #define UNBROKEN (0x00)
-    //in ms
+
+/* All Time units in msecsonds */
 #define BBREAK_DEBOUNCE_INTERVAL (50)
 #define BB_MSK0 (0x01)
 #define BB_MSK1 (0x02)
@@ -29,12 +32,12 @@
  *
  *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-typedef enum beambreak_id{
+typedef enum {
     bbreak_0,
     bbreak_1,
     bbreak_2,
     bbreak_3
-}bbreakid_t;
+} bbreakid_t;
 
 typedef uint8_t bbmsk8_t
 
@@ -44,9 +47,11 @@ typedef uint8_t bbmsk8_t
  *
  *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+/* Don't forget to add documentation */
 bbmsk8_t BBREAK_check(bbmsk8_t msk);
-void BBREAK_debounce(bbmsk8_t msk);
-void BBREAK_init(uint8_t port, uint8_t pin, bbmsk8_t msk,void (*callback)(void) );
 
+void BBREAK_debounce(bbmsk8_t msk);
+
+void BBREAK_init(uint8_t port, uint8_t pin, bbmsk8_t msk, void (*callback)(void) );
 
 #endif /* BEAMBREAK_H_ */

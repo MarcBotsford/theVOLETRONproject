@@ -16,6 +16,13 @@
  *
  *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+typedef enum {
+    CB_NOERROR = 0,
+    CB_NULLPTR,
+    CB_EMPTY,
+    CB_FULL,
+} CB_Status;
+
 typedef struct buf{
     void* head;             // pointer to newest item
     void* tail;             //pointer to oldest item

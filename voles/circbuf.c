@@ -5,25 +5,36 @@
  *      Author: Marc
  */
 #include "circbuf.h"
+#include <stdlib.h>
 
-void CIRCBUF_init(buf_t* buf, uint8_t len, uint8_t size){
-    buf ->buffer = malloc(len * size);
+void CIRCBUF_init(buf_t* buf, uint8_t len, uint8_t size) {
 
+    if (! buf){
+        /* handle error if buf is not declared, NULL */
+        return CB_NULLPTR;
+    }
 
-    buf ->len = len;
-    buf ->cnt = 0;
-    buf ->item_size = size;
-    buf ->head = buf -> buffer;
-    buf ->tail = buf -> buffer;
+    buf ->buffer = (cb_item*) malloc(len * sizeof(cb_item));
+
+    buf->len = len;
+    buf->cnt = 0;
+
+    buf->head = buf->buffer;
+    buf->tail = buf->buffer;
 }
 
 void CIRCBUF_push(buf_t* buf, void* data){
+    if (! buf){
+        /* handle error if buf is not declared, NULL */
+        return CB_NULLPTR;
+    }
+
     if(buf->cnt == buf -> len){
         // bad news bears
             //more specifically, an overflow.
     }
 
-    memcpy(buf->head,data,buf->item_size);
+    memcpy(buf->head, data,buf->item_size);
     buf->head = buf->head + buf->item_size;
     if(buf->head == buf->buffer + (buf->len * buf->item_size)){
         buf -> head = buf -> buffer;
@@ -35,6 +46,12 @@ void CIRCBUF_push(buf_t* buf, void* data){
 void* CIRCBUF_pop(buf_t* buf){
 
     void* data;
+
+    if (! buf){
+        /* handle error if buf is not declared, NULL */
+        return CB_NULLPTR;
+    }
+
     if(buf->cnt == 0){
         //unerflow
     }
@@ -49,14 +66,22 @@ void* CIRCBUF_pop(buf_t* buf){
 }
 
 void CIRCBUF_delete(buf_t* buf){
-    free(buf->buffer);
+    if (! buf){
+        /* handle error if buf is not declared, NULL */
+        return CB_NULLPTR;
+    }
+    free((void *)buf->buffer);
 }
 
-void* CIRCBUF_read(buf_t* buf){
-    void* data;
+CB_Status CIRCBUF_read(buf_t* buf, void * data){
 
-    memcpy(data,buf->head,buf->item_size);
-    return data;
+    if (! buf){
+        /* handle error if buf is not declared, NULL */
+       return CB_NULLPTR;
+    }
+
+    memcpy(data, buf->head, buf->item_size);
+    return CB_NOERROR;
 }
 
 
