@@ -38,15 +38,15 @@
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  *
- * custom data types
+ * type definitions
  *
  *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 typedef enum timer_chanels{          //used mostly for internal functions to identify timers.
-    TA0 = TIMER_A0_BASE,
-    TA1 = TIMER_A1_BASE,
-    TA2 = TIMER_A2_BASE,
-    TA3 = TIMER_A3_BASE
+    TA0 = (TIMER_A0_BASE + 0),
+    TA1 = (TIMER_A1_BASE + 1),
+    TA2 = (TIMER_A2_BASE + 2),
+    TA3 = (TIMER_A3_BASE + 3)
 }tim_t;
 
 typedef enum tim_err{
@@ -87,12 +87,18 @@ typedef volatile uint16_t* hreg16_t;
 #define TIMER_DEV_32 (32)
 #define TIMER_DEV_64 (64)
 
+typedef void (*cb_func_t) (void);
 
-#if 0
+#define CLK_CHANEL_H (clk_chanel & 0xFFFFFFF0)
+#define CLK_CHANEL_S (clk_chanel & 0x00000003)
 
-uint8_t timer_available = 0;
+typedef struct {
+    uint32_t trigger_cnt;
+    uint32_t cnt;
+    cb_func_t callback;
+} alarm_t;
 
-#endif
+
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  *

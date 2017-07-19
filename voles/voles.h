@@ -20,6 +20,4 @@
 #include "uart.h"
 #include "VI.h"
 
-
-
 #endif /* VOLES_H_ */

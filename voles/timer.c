@@ -8,6 +8,9 @@
 #include "timer.h"
 
 
+
+
+
 void (*callback_A0[7]) (void);
 void (*callback_A1[7]) (void);
 void (*callback_A2[7]) (void);
@@ -23,6 +26,15 @@ uint32_t cnt_trg_1[7];
 uint32_t cnt_trg_2[7];
 uint32_t cnt_trg_3[7];
 
+
+
+alarm_t TA [4][7];
+
+
+foo( Alarm_t * alarm) {
+      alarm-
+}
+}
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  *
  * Internal function deffinitions
@@ -31,18 +43,10 @@ uint32_t cnt_trg_3[7];
 
 timerr_t TIMER_load_devider(uint8_t devider, tim_t clk_chanel);
 
-
     //higher max precision
 clkData_t TIMER_calculate_deviders_s(uint32_t period);
     //max precision is garbage ( ~= .5 seconds)
 clkData_t TIMER_calculate_deviders_l(uint32_t period);
-
-
-
-
-
-
-
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -50,7 +54,13 @@ clkData_t TIMER_calculate_deviders_l(uint32_t period);
  *
  *
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+typedef enum {
+    CCR_CHANNEL_0 = 0,
+    CCR_CHANNEL_1,
+    CCR_CHANNEL_2,
+}CCR_Ch_t;
 
+TIMER_config_raw (,,,,,CCR_Channel_0);
 
 timerr_t TIMER_config_raw(uint16_t ccr, uint8_t devider, uint32_t clk_chanel, uint8_t ccr_chanel){
     timerr_t dev_err;
@@ -96,6 +106,8 @@ timerr_t TIMER_config_l(uint32_t period, tim_t clk_chanel, uint8_t ccr_chanel){
 
 
     a = TIMER_config_raw(data.CCR, data.devider, clk_chanel, ccr_chanel);
+
+    TA0[TIMER]
 
     switch(clk_chanel){
     case TA0:
@@ -392,7 +404,7 @@ void TA3_N_IRQHandler(void){
             cnt_A3[i] ++;
 
             if(cnt_A3[i] == cnt_trg_3[i]){
-                cnt_trg_3[i] = 0;
+                cnt_trg_3[i] = 0; k
                 (*callback_A3[i])();
             }
         }

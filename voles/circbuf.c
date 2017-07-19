@@ -23,24 +23,26 @@ void CIRCBUF_init(buf_t* buf, uint8_t len, uint8_t size) {
     buf->tail = buf->buffer;
 }
 
-void CIRCBUF_push(buf_t* buf, void* data){
+CB_Status CIRCBUF_push(buf_t* buf, void* data){
     if (! buf){
         /* handle error if buf is not declared, NULL */
         return CB_NULLPTR;
     }
 
-    if(buf->cnt == buf -> len){
-        // bad news bears
-            //more specifically, an overflow.
+    if(buf->cnt == buf->len){
+        return CB_FULL;
     }
+    *data = *(buf->head);
+    //memcpy(buf->head, data, buf->item_size);
 
-    memcpy(buf->head, data,buf->item_size);
-    buf->head = buf->head + buf->item_size;
+    buf->head++;
+    //buf->head = buf->head + buf->item_size;
     if(buf->head == buf->buffer + (buf->len * buf->item_size)){
         buf -> head = buf -> buffer;
     }
     buf -> cnt++;
 
+    return CB_NOERROR;
 }
 
 void* CIRCBUF_pop(buf_t* buf){
