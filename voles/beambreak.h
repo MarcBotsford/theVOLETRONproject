@@ -16,6 +16,12 @@
 
 #define BROKEN (0x01)
 #define UNBROKEN (0x00)
+    //in ms
+#define BBREAK_DEBOUNCE_INTERVAL (50)
+#define BB_MSK0 (0x01)
+#define BB_MSK1 (0x02)
+#define BB_MSK2 (0x04)
+#define BB_MSK3 (0x08)
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  *
@@ -30,15 +36,17 @@ typedef enum beambreak_id{
     bbreak_3
 }bbreakid_t;
 
+typedef uint8_t bbmsk8_t
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  *
  *function definitions
  *
  *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-uint8_t BBREAK_check(bbreakid_t id);
-uint8_t BBREAK_debounce(bbreakid_t id, uint8_t interval);
-void BBREAK_init(uint8_t port, uint8_t pin, bbreakid_t given_id);
+bbmsk8_t BBREAK_check(bbmsk8_t msk);
+void BBREAK_debounce(bbmsk8_t msk);
+void BBREAK_init(uint8_t port, uint8_t pin, bbmsk8_t msk,void (*callback)(void) );
 
 
 #endif /* BEAMBREAK_H_ */
