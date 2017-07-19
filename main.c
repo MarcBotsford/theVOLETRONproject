@@ -21,18 +21,28 @@ void main(void){
 
     WDTCTL = WDTPW | WDTHOLD;
 
-    clkData_t datat;
-    b = TIMER_config_raw(0xFFFF, TIMER_DEV_1, TA1, 0);
 
+    buf_t testbuf;
+    uint8_t testdata = 5;
+    uint8_t* testptr = &testdata;
 
-    b = TIMER_set_callback(TA1,0, &test_callback);
-    TIMER_begin(TA1);
+    CIRCBUF_init(&testbuf, 10, 1);
+    CIRCBUF_push(&testbuf, testptr);
+    CIRCBUF_push(&testbuf, testptr);
+    CIRCBUF_push(&testbuf, testptr);
+    CIRCBUF_push(&testbuf, testptr);
+    CIRCBUF_push(&testbuf, testptr);
+    CIRCBUF_push(&testbuf, testptr);
+    CIRCBUF_push(&testbuf, testptr);
+    CIRCBUF_push(&testbuf, testptr);
+    CIRCBUF_push(&testbuf, testptr);
+
 
     Interrupt_enableMaster();
     Interrupt_enableInterrupt(INT_TA1_N);
 
 
-    TIMER_calculate_deviders_l(1000);
+    TIMER_calculate_deviders_l(10000);
 
     while(1);
 	

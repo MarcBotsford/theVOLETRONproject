@@ -8,6 +8,8 @@
 #ifndef CIRCBUF_H_
 #define CIRCBUF_H_
 
+#include "msp.h"
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  *
  *type definitions
@@ -30,11 +32,11 @@ typedef struct buf{
  *
  *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-void* CIRCBUF_init(buf_t buf, uint8_t len, uint8_t size);
-void* CIRCBUF_push(buf_t buf, void* data);
-void* CIRCBUF_pop(buf_t buf);
-void* CIRCBUF_read(buf_t buf);
-void CIRCBUF_delete(buf_t buf);
+void CIRCBUF_init(buf_t* buf, uint8_t len, uint8_t size);
+void CIRCBUF_push(buf_t* buf, void* data);
+void* CIRCBUF_pop(buf_t* buf);
+void* CIRCBUF_read(buf_t* buf);
+void CIRCBUF_delete(buf_t* buf);
 
 
 #endif /* CIRCBUF_H_ */
