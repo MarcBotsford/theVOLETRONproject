@@ -13,7 +13,9 @@ ORDERED_OBJS += \
 "./main.obj" \
 "./startup_msp432p401r_ccs.obj" \
 "./system_msp432p401r.obj" \
+"./voles/beambreak.obj" \
 "./voles/circbuf.obj" \
+"./voles/debounce.obj" \
 "./voles/timer.obj" \
 "../msp432p401r.cmd" \
 "../msp432p4xx_driverlib.lib" \
@@ -160,8 +162,8 @@ VOLETRON.hex: $(EXE_OUTPUTS)
 # Other Targets
 clean:
 	-$(RM) $(BIN_OUTPUTS__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "main.obj" "startup_msp432p401r_ccs.obj" "system_msp432p401r.obj" "voles\circbuf.obj" "voles\timer.obj" 
-	-$(RM) "main.d" "startup_msp432p401r_ccs.d" "system_msp432p401r.d" "voles\circbuf.d" "voles\timer.d" 
+	-$(RM) "main.obj" "startup_msp432p401r_ccs.obj" "system_msp432p401r.obj" "voles\beambreak.obj" "voles\circbuf.obj" "voles\debounce.obj" "voles\timer.obj" 
+	-$(RM) "main.d" "startup_msp432p401r_ccs.d" "system_msp432p401r.d" "voles\beambreak.d" "voles\circbuf.d" "voles\debounce.d" "voles\timer.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

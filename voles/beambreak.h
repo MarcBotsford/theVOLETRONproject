@@ -21,10 +21,10 @@
 
 /* All Time units in msecsonds */
 #define BBREAK_DEBOUNCE_INTERVAL (50)
-#define BB_MSK0 (0x01)
-#define BB_MSK1 (0x02)
-#define BB_MSK2 (0x04)
-#define BB_MSK3 (0x08)
+#define BBMSK0 (0x01)
+#define BBMSK1 (0x02)
+#define BBMSK2 (0x04)
+#define BBMSK3 (0x08)
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  *
@@ -39,7 +39,7 @@ typedef enum {
     bbreak_3
 } bbreakid_t;
 
-typedef uint8_t bbmsk8_t
+typedef uint8_t bbmsk8_t;
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  *

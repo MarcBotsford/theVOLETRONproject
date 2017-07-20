@@ -7,8 +7,8 @@
 
 
 #include <stdint.h>
-#include "beambreak.h"
-#include "debouce.h"
+#include "voles/beambreak.h"
+#include "voles/debounce.h"
 
 uint8_t bbreak_flg;
 
@@ -57,7 +57,7 @@ void BBREAK_debounce(bbmsk8_t msk){
         (*callback_np[2])();
     }
     if(msk & BBMSK3){
-        (*callback_np[3]);
+        (*callback_np[3])();
     }
 
     bbreak_flg = 0;

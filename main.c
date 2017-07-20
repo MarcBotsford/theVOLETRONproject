@@ -26,16 +26,7 @@ void main(void){
     uint8_t testdata = 5;
     uint8_t* testptr = &testdata;
 
-    CIRCBUF_init(&testbuf, 10, 1);
-    CIRCBUF_push(&testbuf, testptr);
-    CIRCBUF_push(&testbuf, testptr);
-    CIRCBUF_push(&testbuf, testptr);
-    CIRCBUF_push(&testbuf, testptr);
-    CIRCBUF_push(&testbuf, testptr);
-    CIRCBUF_push(&testbuf, testptr);
-    CIRCBUF_push(&testbuf, testptr);
-    CIRCBUF_push(&testbuf, testptr);
-    CIRCBUF_push(&testbuf, testptr);
+//    TIMER_calculate_deviders_s(100000);
 
 
     Interrupt_enableMaster();

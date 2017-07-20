@@ -57,7 +57,9 @@ typedef enum tim_err{
     pause_paused_clock,
     timer_invalid_devider,
     timer_invalid_chanel,
-    timer_invalid_ccr_chanel
+    timer_invalid_ccr_chanel,
+    timer_ccr_chanel_buisy,
+    timer_clk_unavailable
 }timerr_t;
 
 typedef enum tim_id{
@@ -70,10 +72,26 @@ typedef enum tim_id{
 typedef struct _clk_data{
     uint8_t devider;
     uint16_t CCR;
-    uint32_t cnt;
+    uint32_t trig_cnt;
 }clkData_t;
 
-typedef volatile uint16_t* hreg16_t;
+typedef enum {
+    cc_unused = 0,
+    cc_pwm,
+    cc_permanent,
+    cc_instance_task,
+    cc_repeated_task
+}ccrStatus_t;
+
+typedef enum{
+    cs_unused = 0,
+    cs_up,
+    cs_continuous
+}clkStatus_t;
+
+//typedef
+
+//typedef volatile uint16_t* hreg16_t;
 
 #define TIMER_DEV_8 (0x03)
 #define TIMER_DEV_4 (0x02)
@@ -85,6 +103,7 @@ typedef volatile uint16_t* hreg16_t;
 #define TIMER_DEV_10 (10)
 #define TIMER_DEV_16 (16)
 #define TIMER_DEV_32 (32)
+#define TIMER_DEV_40 (40)
 #define TIMER_DEV_64 (64)
 
 typedef void (*cb_func_t) (void);
@@ -96,8 +115,9 @@ typedef struct {
     uint32_t trigger_cnt;
     uint32_t cnt;
     cb_func_t callback;
-} alarm_t;
+    ccrStatus_t use_state;
 
+} alarm_t;
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -108,6 +128,9 @@ typedef struct {
 
 #define CNT_PRD_MS (557/*.056*/)
 
+#define DEV_1MS (TIMER_DEV_40)
+#define CCR_1MS (100)
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  *
  * function definitions
@@ -116,7 +139,8 @@ typedef struct {
 
 timerr_t TIMER_config_raw(uint16_t ccr, uint8_t devider,tim_t clk_chanel, uint8_t ccr_chanel);
 timerr_t TIMER_config_l(uint32_t period, tim_t clk_chanel,uint8_t ccr_chanel);
-timerr_t TIMER_config_ccr_raw(uint16_t ccr, tim_t clk_chanel, uint8_t ccr_chanel);
+timerr_t TIMER_config(uint32_t period, tim_t clk_chanel, uint8_t ccr_chanel);
+timerr_t TIMER_config_ccr_raw_cnt(uint16_t ccr, tim_t clk_chanel, uint8_t ccr_chanel, uint32_t cnt_gl);
 timerr_t TIMER_begin(tim_t clk_chanel);
 timerr_t TIMER_pause(tim_t chanel);
 timerr_t TIMER_reset_raw(tim_t chanel, uint32_t ccr, uint8_t devider, uint8_t ccr_chanel);
@@ -132,4 +156,5 @@ void TA1_N_IRQHandler(void);
 
 
 clkData_t TIMER_calculate_deviders(uint32_t period);
+clkData_t TIMER_calculate_deviders_s(uint32_t period, tim_t clk_chanel);
 #endif /* TIMER_H_ */

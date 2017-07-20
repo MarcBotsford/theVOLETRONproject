@@ -23,7 +23,7 @@ void CIRCBUF_init(buf_t* buf, uint8_t len, uint8_t size) {
     buf->tail = buf->buffer;
 }
 
-CB_Status CIRCBUF_push(buf_t* buf, void* data){
+void CIRCBUF_push(buf_t* buf, void* data){
     if (! buf){
         /* handle error if buf is not declared, NULL */
         return CB_NULLPTR;
@@ -32,8 +32,8 @@ CB_Status CIRCBUF_push(buf_t* buf, void* data){
     if(buf->cnt == buf->len){
         return CB_FULL;
     }
-    *data = *(buf->head);
-    //memcpy(buf->head, data, buf->item_size);
+//    *data = *(buf->head);
+    memcpy(buf->head, data, buf->item_size);
 
     buf->head++;
     //buf->head = buf->head + buf->item_size;

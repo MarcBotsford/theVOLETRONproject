@@ -30,9 +30,9 @@ typedef struct buf{
     cb_item * head;             // pointer to newest item
     cb_item * tail;             //pointer to oldest item
     cb_item * buffer;           //pointer to begining of the struct
-    size_t len;                 //total length of the buffer
+    uint8_t len;                 //total length of the buffer
     uint8_t item_size;          //size of each item
-    size_t cnt;                 //number of items currently in the buffer
+    uint8_t cnt;                 //number of items currently in the buffer
 
 }buf_t;
 
@@ -43,9 +43,9 @@ typedef struct buf{
  *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 void CIRCBUF_init(buf_t* buf, uint8_t len, uint8_t size);
-void CIRCBUF_push(buf_t* buf, cb_item * data);
+void CIRCBUF_push(buf_t* buf, void * data);
 void* CIRCBUF_pop(buf_t* buf);
-CB_Status CIRCBUF_read(buf_t* buf, cb_item * data);
+CB_Status CIRCBUF_read(buf_t* buf, void * data);
 void CIRCBUF_delete(buf_t* buf);
 
 
