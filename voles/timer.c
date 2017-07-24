@@ -6,6 +6,7 @@
  */
 #include "msp.h"
 #include "timer.h"
+#include "interrupt.h"
 
 
 
@@ -178,7 +179,7 @@ timerr_t TIMER_config(uint32_t period, tim_t clk_chanel, uint8_t ccr_chanel){
 clkData_t TIMER_calculate_deviders_s(uint32_t period, tim_t clk_chanel){
     clkData_t dat;
     dat.devider = DEV_1MS;
-    period = (period *CCR_1MS) + TIMER_AG(CLK_CHANEL_H)->R;
+    period = (period *CCR_1MS)/* + TIMER_AG(CLK_CHANEL_H)->R*/;
     dat.trig_cnt = 0;
     while(period > 0xFFFF){
         dat.trig_cnt ++;
@@ -312,6 +313,21 @@ timerr_t TIMER_pause(tim_t clk_chanel){
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 
+timerr_t TIMER_kill_raw(tim_t clk_chanel, uint8_t ccr_chanel){
+    if(!(clk_chanel == TA0 || clk_chanel == TA1 || clk_chanel == TA2 || clk_chanel == TA3)){
+        return timer_invalid_chanel;
+    }
+    if(ccr_chanel > 6){
+        return timer_invalid_ccr_chanel;
+    }
+
+    TIMER_AG(CLK_CHANEL_H) ->CCTL[ccr_chanel] &= ~(CCIFG);
+    return timer_no_error;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
 timerr_t TIMER_reset_raw(tim_t clk_chanel, uint32_t ccr, uint8_t devider, uint8_t ccr_chanel){
     if(!(clk_chanel == TA0 || clk_chanel == TA1 || clk_chanel == TA2 || clk_chanel == TA3)){
         return timer_invalid_chanel;
@@ -368,12 +384,44 @@ timerr_t TIMER_set_callback(tim_t clk_chanel,uint8_t ccr_chanel, void (*callback
 
 timid_t TIMER_request(uint32_t period, void(*callback)){
 
-    return task0;
-}
+    clkData_t dat;
+    timerr_t err;
+    uint_fast8_t i;
+    tim_t used_clock;
+        /* figure out what gwill get loaded into the timer*/
+    dat = TIMER_calculate_deviders_s(period,TA0);
+        /*find a free timer*/
+    for(i = 0; i < 4 ;i++){
+        if(TA_status[i] == cs_unused){
+            switch(i){
+                case 0:{
+                    used_clock = TA0;
+                    break;
+                }
+                case 1:{
+                    used_clock = TA1;
+                    break;
+                }
+                case 2:{
+                    used_clock = TA2;
+                    break;
+                }
+                case 3:{
+                    used_clock = TA3;
+                    break;
+                }
+                default:
+                    return all_timers_buisy;
 
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+            }
+            break;
+        }
+    }
 
-timid_t TIMER_request_repeat(uint32_t period, void(*callback), uint32_t reps){
+    err = TIMER_config(period, used_clock, 0);
+    TIMER_set_callback(used_clock, 0, callback);
+    TIMER_begin(used_clock);
+
 
     return task0;
 }
@@ -415,71 +463,74 @@ timerr_t TIMER_config_cnt_raw(uint16_t ccr, uint8_t devider,tim_t clk_chanel, ui
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
+//#if 0
 void TA1_N_IRQHandler(void){
-    uint8_t i;
+    static uint_fast8_t i;
     TIMER_A1 -> CTL &= ~(TAIFG);
     for(i = 0; i<=6;i++){
         if(TIMER_A1->CCTL[i] & CCIFG && TIMER_A1->CCTL[i] & CCIE){
             TIMER_A1->CCTL[i] &= ~(CCIFG);
+            TA[1][i].cnt++;
 
-
-            if(TA[1][i].cnt == TA[1][i].trigger_cnt){
+            if(TA[1][i].cnt - 1 == TA[1][i].trigger_cnt){
                 TA[1][i].cnt = 0;
                 (*TA[1][i].callback)();
             }
-            TA[1][i].cnt++;
         }
     }
 }
+//#endif
+
+
+
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 void TA0_N_IRQHandler(void){
-    uint8_t i;
+    static uint_fast8_t i;
+
     TIMER_A0 -> CTL &= ~(TAIFG);
     for(i = 0; i<=6;i++){
         if(TIMER_A0->CCTL[i] & CCIFG && TIMER_A0->CCTL[i] & CCIE){
             TIMER_A0->CCTL[i] &= ~(CCIFG);
+            TA[0][i].cnt++;
 
-
-            if(TA[0][i].cnt == TA[0][i].trigger_cnt){
+            if(TA[0][i].cnt - 1 == TA[0][i].trigger_cnt){
                 TA[0][i].cnt = 0;
                 (*TA[0][i].callback)();
             }
-            TA[0][i].cnt++;
         }
     }
 }
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 void TA2_N_IRQHandler(void){
-    uint8_t i;
+    static uint_fast8_t i;
     TIMER_A2 -> CTL &= ~(TAIFG);
     for(i = 0; i<=6;i++){
         if(TIMER_A2->CCTL[i] & CCIFG && TIMER_A2->CCTL[i] & CCIE){
             TIMER_A2->CCTL[i] &= ~(CCIFG);
+            TA[2][i].cnt ++;
 
-
-            if(TA[2][i].cnt == TA[2][i].trigger_cnt){
+            if(TA[2][i].cnt - 1 == TA[2][i].trigger_cnt){
                 TA[2][i].cnt = 0;
                 (*TA[2][i].callback)();
             }
-            TA[2][i].cnt ++;
         }
     }
 }
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 void TA3_N_IRQHandler(void){
-    uint8_t i;
+    static uint_fast8_t i;
     TIMER_A3 -> CTL &= ~(TAIFG);
     for(i = 0; i<=6;i++){
         if(TIMER_A3->CCTL[i] & CCIFG && TIMER_A3->CCTL[i] & CCIE){
             TIMER_A3->CCTL[i] &= ~(CCIFG);
+            TA[3][i].cnt ++;
 
-            if(TA[3][i].cnt == TA[3][i].trigger_cnt){
+            if(TA[3][i].cnt - 1 == TA[3][i].trigger_cnt){
                 TA[3][i].cnt = 0;
 //                (*callback_A3[i])();
                 (*TA[3][i].callback)();
             }
-            TA[3][i].cnt ++;
         }
     }
 }

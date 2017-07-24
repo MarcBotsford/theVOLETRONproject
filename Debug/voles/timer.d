@@ -16,6 +16,8 @@ voles/timer.obj: ../voles/timer.h
 voles/timer.obj: C:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.1.LTS/include/math.h
 voles/timer.obj: C:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.1.LTS/include/linkage.h
 voles/timer.obj: C:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.1.LTS/include/_defs.h
+voles/timer.obj: C:/ti/ccsv7/ccs_base/arm/include/msp432_driverlib_3_21_00_05/driverlib/MSP432P4xx/interrupt.h
+voles/timer.obj: C:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.1.LTS/include/stdbool.h
 
 ../voles/timer.c: 
 C:/ti/ccsv7/ccs_base/arm/include/msp.h: 
@@ -33,3 +35,5 @@ C:/ti/ccsv7/ccs_base/arm/include/system_msp432p401r.h:
 C:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.1.LTS/include/math.h: 
 C:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.1.LTS/include/linkage.h: 
 C:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.1.LTS/include/_defs.h: 
+C:/ti/ccsv7/ccs_base/arm/include/msp432_driverlib_3_21_00_05/driverlib/MSP432P4xx/interrupt.h: 
+C:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.1.LTS/include/stdbool.h: 

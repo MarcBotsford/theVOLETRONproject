@@ -1,6 +1,10 @@
 //*****************************************************************************
 //
-// MSP432 main.c template - Empty main
+// Botsford
+//
+//          o   o
+//            |
+//        \_______/
 //
 //*****************************************************************************
 
@@ -15,25 +19,32 @@
     timerr_t d;
 
     void test_callback(void);
+    void test_callback1(void);
+    void test_callback2();
+    void test_callback3(void);
 
 void main(void){
 
+    uint32_t x = 0;
 
     WDTCTL = WDTPW | WDTHOLD;
 
-
-    buf_t testbuf;
-    uint8_t testdata = 5;
-    uint8_t* testptr = &testdata;
-
-//    TIMER_calculate_deviders_s(100000);
-
-
     Interrupt_enableMaster();
+    Interrupt_enableInterrupt(INT_TA0_N);
     Interrupt_enableInterrupt(INT_TA1_N);
+    Interrupt_enableInterrupt(INT_TA2_N);
+    Interrupt_enableInterrupt(INT_TA3_N);
+
+    P1DIR |= BIT0;
+    P2DIR |= BIT0 | BIT1 | BIT2;
 
 
-    TIMER_calculate_deviders_l(10000);
+
+//    TIMER_calculate_deviders_s(100, TA1);
+    TIMER_request(500,test_callback);
+    TIMER_request(50, &test_callback1);
+    TIMER_request(100, &test_callback2);
+    TIMER_request(1000,&test_callback3);
 
     while(1);
 	
@@ -41,6 +52,15 @@ void main(void){
 
 
 void test_callback(void){
-    a++;
+    P1OUT ^= BIT0;
 
+}
+void test_callback1(void){
+    P2OUT ^= BIT0;
+}
+void test_callback2(){
+    P2OUT ^= BIT1;
+}
+void test_callback3(void){
+    P2OUT ^= BIT2;
 }

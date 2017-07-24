@@ -19,17 +19,17 @@
 typedef uint8_t cb_item;
 
 typedef enum {
-    CB_NOERROR = 0,
-    CB_NULLPTR,
-    CB_EMPTY,
-    CB_FULL,
-    CB_MALLOC_FAIL,
-} CB_Status;
+    cb_no_error = 0,
+    cb_null_pointer,
+    cb_empty,
+    cb_full,
+    cb_malloc_failure,
+} cbStatus_t;
 
 typedef struct buf{
-    cb_item * head;             // pointer to newest item
-    cb_item * tail;             //pointer to oldest item
-    cb_item * buffer;           //pointer to begining of the struct
+    void * head;             // pointer to newest item
+    void * tail;             //pointer to oldest item
+    void * buffer;           //pointer to begining of the struct
     uint8_t len;                 //total length of the buffer
     uint8_t item_size;          //size of each item
     uint8_t cnt;                 //number of items currently in the buffer
@@ -42,11 +42,11 @@ typedef struct buf{
  *
  *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-void CIRCBUF_init(buf_t* buf, uint8_t len, uint8_t size);
-void CIRCBUF_push(buf_t* buf, void * data);
+cbStatus_t CIRCBUF_init(buf_t* buf, uint8_t len, uint8_t size);
+cbStatus_t CIRCBUF_push(buf_t* buf, void * data);
 void* CIRCBUF_pop(buf_t* buf);
-CB_Status CIRCBUF_read(buf_t* buf, void * data);
-void CIRCBUF_delete(buf_t* buf);
+cbStatus_t CIRCBUF_read(buf_t* buf, void * data);
+cbStatus_t CIRCBUF_delete(buf_t* buf);
 
 
 #endif /* CIRCBUF_H_ */

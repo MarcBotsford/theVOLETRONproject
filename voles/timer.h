@@ -144,15 +144,19 @@ timerr_t TIMER_config_ccr_raw_cnt(uint16_t ccr, tim_t clk_chanel, uint8_t ccr_ch
 timerr_t TIMER_begin(tim_t clk_chanel);
 timerr_t TIMER_pause(tim_t chanel);
 timerr_t TIMER_reset_raw(tim_t chanel, uint32_t ccr, uint8_t devider, uint8_t ccr_chanel);
-timerr_t TIMER_set_callback(tim_t chanel,uint8_t ccr_chanel, void (*callback)(void));
+timerr_t TIMER_set_callback(tim_t clk_chanel,uint8_t ccr_chanel, void (*callback)(void));
 timid_t TIMER_request(uint32_t period, void(*callback));
 timid_t TIMER_request_repeat(uint32_t period, void(*callback), uint32_t reps);
 timerr_t TIMER_kill(uint8_t taskid);
+timerr_t TIMER_kill_raw(tim_t clk_chanel, uint8_t ccr_Chanel);
 
 timerr_t TIMER_config_cnt_raw(uint16_t ccr, uint8_t devider,tim_t clk_chanel, uint8_t ccr_chanel, uint32_t cnt_gl);
 clkData_t TIMER_calculate_deviders_l(uint32_t period);
 
+void TA0_N_IRQHandler(void);
 void TA1_N_IRQHandler(void);
+void TA2_N_IRQHandler(void);
+void TA3_N_IRQHandler(void);
 
 
 clkData_t TIMER_calculate_deviders(uint32_t period);
