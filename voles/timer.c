@@ -48,6 +48,8 @@ clkData_t TIMER_calculate_deviders_s(uint32_t period, tim_t clk_chanel);
     //max precision is garbage ( ~= .5 seconds)
 clkData_t TIMER_calculate_deviders_l(uint32_t period);
 
+void TIMER_callback_default(void);
+
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  *
@@ -460,6 +462,40 @@ timerr_t TIMER_config_cnt_raw(uint16_t ccr, uint8_t devider,tim_t clk_chanel, ui
     TA[CLK_CHANEL_S][ccr_chanel].trigger_cnt = cnt_gl;
 
     return timer_no_error;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+timerr_t TIMER_init(void){
+    uint_fast8_t i;
+    uint_fast8_t j;
+    for(i = 0; i < 4; i++){
+        for(j = 0; j < 7; j++){
+            TA[i][j].callback = &TIMER_callback_default;
+        }
+    }
+    Interrupt_enableInterrupt(INT_TA0_N);
+    Interrupt_enableInterrupt(INT_TA1_N);
+    Interrupt_enableInterrupt(INT_TA2_N);
+    Interrupt_enableInterrupt(INT_TA3_N);
+    return timer_no_error;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+void TIMER_callback_default(void){
+
+    /*
+     *
+     * If you are in this loop it means you messed up.
+     * The system probably triggered an unwanted timer interrupt or you tried
+     * to allocate a timer by hand and forgot to set the callback.
+     *
+     *  You can fix it by resolving to use the TIMER_request function so the
+     *  system will automagically make everything work ok for you.
+     *
+     */
+    while(1);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/

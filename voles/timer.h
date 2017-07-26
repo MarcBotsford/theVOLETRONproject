@@ -149,6 +149,7 @@ timid_t TIMER_request(uint32_t period, void(*callback));
 timid_t TIMER_request_repeat(uint32_t period, void(*callback), uint32_t reps);
 timerr_t TIMER_kill(uint8_t taskid);
 timerr_t TIMER_kill_raw(tim_t clk_chanel, uint8_t ccr_Chanel);
+timerr_t TIMER_init(void);
 
 timerr_t TIMER_config_cnt_raw(uint16_t ccr, uint8_t devider,tim_t clk_chanel, uint8_t ccr_chanel, uint32_t cnt_gl);
 clkData_t TIMER_calculate_deviders_l(uint32_t period);

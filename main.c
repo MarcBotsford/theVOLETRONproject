@@ -30,21 +30,15 @@ void main(void){
     WDTCTL = WDTPW | WDTHOLD;
 
     Interrupt_enableMaster();
-    Interrupt_enableInterrupt(INT_TA0_N);
-    Interrupt_enableInterrupt(INT_TA1_N);
-    Interrupt_enableInterrupt(INT_TA2_N);
-    Interrupt_enableInterrupt(INT_TA3_N);
+
 
     P1DIR |= BIT0;
     P2DIR |= BIT0 | BIT1 | BIT2;
 
 
 
-//    TIMER_calculate_deviders_s(100, TA1);
-    TIMER_request(500,test_callback);
-    TIMER_request(50, &test_callback1);
-    TIMER_request(100, &test_callback2);
-    TIMER_request(1000,&test_callback3);
+
+
 
     while(1);
 	

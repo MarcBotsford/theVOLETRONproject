@@ -16,7 +16,7 @@
  *
  *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-typedef uint8_t cb_item;
+typedef uint8_t cb_item8;
 
 typedef enum {
     cb_no_error = 0,
@@ -27,9 +27,9 @@ typedef enum {
 } cbStatus_t;
 
 typedef struct buf{
-    void * head;             // pointer to newest item
-    void * tail;             //pointer to oldest item
-    void * buffer;           //pointer to begining of the struct
+    cb_item8 * head;             // pointer to newest item
+    cb_item8 * tail;             //pointer to oldest item
+    cb_item8 * buffer;           //pointer to begining of the struct
     uint8_t len;                 //total length of the buffer
     uint8_t item_size;          //size of each item
     uint8_t cnt;                 //number of items currently in the buffer
@@ -42,9 +42,11 @@ typedef struct buf{
  *
  *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+
+/* Note, these functions can handle 8 bit data only*/
 cbStatus_t CIRCBUF_init(buf_t* buf, uint8_t len, uint8_t size);
-cbStatus_t CIRCBUF_push(buf_t* buf, void * data);
-void* CIRCBUF_pop(buf_t* buf);
+cbStatus_t CIRCBUF_push(buf_t* buf, cb_item8  data);
+cb_item8 CIRCBUF_pop(buf_t* buf);
 cbStatus_t CIRCBUF_read(buf_t* buf, void * data);
 cbStatus_t CIRCBUF_delete(buf_t* buf);
 
