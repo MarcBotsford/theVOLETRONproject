@@ -69,6 +69,11 @@ typedef enum tim_id{
     task2
 }timid_t;
 
+typedef struct{
+    tim_t clock_chanel;
+    uint8_t ccr_chanel;
+}timerTaskid_t;
+
 typedef struct _clk_data{
     uint8_t devider;
     uint16_t CCR;
@@ -145,9 +150,9 @@ timerr_t TIMER_begin(tim_t clk_chanel);
 timerr_t TIMER_pause(tim_t chanel);
 timerr_t TIMER_reset_raw(tim_t chanel, uint32_t ccr, uint8_t devider, uint8_t ccr_chanel);
 timerr_t TIMER_set_callback(tim_t clk_chanel,uint8_t ccr_chanel, void (*callback)(void));
-timid_t TIMER_request(uint32_t period, void(*callback));
-timid_t TIMER_request_repeat(uint32_t period, void(*callback), uint32_t reps);
-timerr_t TIMER_kill(uint8_t taskid);
+timerTaskid_t TIMER_request(uint32_t period, void(*callback)(void));
+timerTaskid_t TIMER_request_repeat(uint32_t period, void(*callback), uint32_t reps);
+timerr_t TIMER_kill(timerTaskid_t taskid);
 timerr_t TIMER_kill_raw(tim_t clk_chanel, uint8_t ccr_Chanel);
 timerr_t TIMER_init(void);
 

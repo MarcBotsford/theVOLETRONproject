@@ -8,36 +8,42 @@ SHELL = cmd.exe
 C_SRCS += \
 ../voles/beambreak.c \
 ../voles/circbuf.c \
+../voles/custom_uart.c \
 ../voles/debounce.c \
 ../voles/timer.c 
 
 C_DEPS += \
 ./voles/beambreak.d \
 ./voles/circbuf.d \
+./voles/custom_uart.d \
 ./voles/debounce.d \
 ./voles/timer.d 
 
 OBJS += \
 ./voles/beambreak.obj \
 ./voles/circbuf.obj \
+./voles/custom_uart.obj \
 ./voles/debounce.obj \
 ./voles/timer.obj 
 
 OBJS__QUOTED += \
 "voles\beambreak.obj" \
 "voles\circbuf.obj" \
+"voles\custom_uart.obj" \
 "voles\debounce.obj" \
 "voles\timer.obj" 
 
 C_DEPS__QUOTED += \
 "voles\beambreak.d" \
 "voles\circbuf.d" \
+"voles\custom_uart.d" \
 "voles\debounce.d" \
 "voles\timer.d" 
 
 C_SRCS__QUOTED += \
 "../voles/beambreak.c" \
 "../voles/circbuf.c" \
+"../voles/custom_uart.c" \
 "../voles/debounce.c" \
 "../voles/timer.c" 
 

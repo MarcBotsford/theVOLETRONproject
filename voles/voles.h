@@ -17,7 +17,7 @@
 #include "rfid.h"
 #include "rtc.h"
 #include "timer.h"
-#include "uart.h"
+#include "custom_uart.h"
 #include "VI.h"
 
 #endif /* VOLES_H_ */

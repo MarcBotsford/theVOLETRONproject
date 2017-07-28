@@ -1,13 +1,15 @@
 /*
- * uart.h
+ * custom_uart.h
  *
- *  Created on: Jul 6, 2017
+ *  Created on: Jul 28, 2017
  *      Author: Marc
  */
 
-#ifndef UART_H_
-#define UART_H_
+#ifndef CUSTOM_UART_H_
+#define CUSTOM_UART_H_
 
+#include "uart.h"
+#include "msp.h"
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  *
@@ -17,13 +19,15 @@
 typedef enum uart_err{
     uart_no_error,
     transmit_failure,
-    recieve_failure
+    recieve_failure,
+    requested_EUSCI_module_buisy
 }uarterr_t;
 
 typedef enum uart_chanel{
-    UART_c0,
-    UART_c1,
-    UARt_c2
+    UART_c0 = EUSCI_A0_BASE,
+    UART_c1 = EUSCI_A1_BASE,
+    UART_c2 = EUSCI_A2_BASE,
+    UART_c3 = EUSCI_A3_BASE
 }uartchanel_t;
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -41,4 +45,4 @@ uarterr_t UART_init(uartchanel_t chanel);
 
 
 
-#endif /* UART_H_ */
+#endif /* CUSTOM_UART_H_ */

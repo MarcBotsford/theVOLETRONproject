@@ -323,6 +323,15 @@ timerr_t TIMER_kill_raw(tim_t clk_chanel, uint8_t ccr_chanel){
         return timer_invalid_ccr_chanel;
     }
 
+    uint8_t i;
+
+    TA[CLK_CHANEL_S][ccr_chanel].use_state = cc_unused;
+    for(i = 0; i < 7; i++){
+        if(TA[CLK_CHANEL_S][i].use_state != cc_unused){
+            break;
+        }
+        TA_status[CLK_CHANEL_S] = cs_unused;
+    }
     TIMER_AG(CLK_CHANEL_H) ->CCTL[ccr_chanel] &= ~(CCIFG);
     return timer_no_error;
 }
@@ -384,12 +393,13 @@ timerr_t TIMER_set_callback(tim_t clk_chanel,uint8_t ccr_chanel, void (*callback
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 
-timid_t TIMER_request(uint32_t period, void(*callback)){
+timerTaskid_t TIMER_request(uint32_t period, void(*callback)(void)){
 
     clkData_t dat;
     timerr_t err;
     uint_fast8_t i;
     tim_t used_clock;
+    timerTaskid_t potential_identifier;
         /* figure out what gwill get loaded into the timer*/
     dat = TIMER_calculate_deviders_s(period,TA0);
         /*find a free timer*/
@@ -412,8 +422,12 @@ timid_t TIMER_request(uint32_t period, void(*callback)){
                     used_clock = TA3;
                     break;
                 }
-                default:
-                    return all_timers_buisy;
+                default:{
+                    /*
+                     * this is a preliminary error state
+                     */
+                    while(1);
+                }
 
             }
             break;
@@ -423,16 +437,18 @@ timid_t TIMER_request(uint32_t period, void(*callback)){
     err = TIMER_config(period, used_clock, 0);
     TIMER_set_callback(used_clock, 0, callback);
     TIMER_begin(used_clock);
+    potential_identifier.clock_chanel = used_clock;
+    potential_identifier.ccr_chanel = 0;
 
 
-    return task0;
+    return potential_identifier;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-timerr_t TIMER_kill(uint8_t taskid){
+timerr_t TIMER_kill(timerTaskid_t taskid){
 
-    return timer_no_error;
+    return TIMER_kill_raw(taskid.clock_chanel, taskid.ccr_chanel);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/

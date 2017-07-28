@@ -28,7 +28,7 @@ void BBREAK_init(uint8_t port, uint8_t pin, bbmsk8_t msk, void (*callback)(void)
         //error, invalid pin/port combo
     }
 
-    DEBOUNCE_request(port, pin, DB_RISING, current_task_data, callback);
+//    DEBOUNCE_request(port, pin, DB_RISING, current_task_data, callback);
 
     if(msk == BBMSK0){
         (callback_np[0]) = callback;
