@@ -13,7 +13,17 @@ uarterr_t UART_init(uartchanel_t chanel){
         return requested_EUSCI_module_buisy;
     }
 
-    const eUSCI_UART_Config std_uart_config = {EUSCI_A_UART_CLOCKSOURCE_SMCLK, 26, 1, 1, EUSCI_A_UART_NO_PARITY, EUSCI_A_UART_LSB_FIRST, EUSCI_A_UART_ONE_STOP_BIT, EUSCI_A_UART_MODE, EUSCI_A_UART_OVERSAMPLING_BAUDRATE_GENERATION};
+    const eUSCI_UART_Config std_uart_config = {
+                                               EUSCI_A_UART_CLOCKSOURCE_SMCLK,
+                                               78,
+                                               2,
+                                               0x00,
+                                               EUSCI_A_UART_NO_PARITY,
+                                               EUSCI_A_UART_LSB_FIRST,
+                                               EUSCI_A_UART_ONE_STOP_BIT,
+                                               EUSCI_A_UART_MODE,
+                                               EUSCI_A_UART_OVERSAMPLING_BAUDRATE_GENERATION
+    };
 
     UART_initModule(chanel, &std_uart_config);
 
