@@ -20,7 +20,8 @@ typedef enum uart_err{
     uart_no_error,
     transmit_failure,
     recieve_failure,
-    requested_EUSCI_module_buisy
+    requested_EUSCI_module_buisy,
+    uart_unfinished_module
 }uarterr_t;
 
 typedef enum uart_chanel{

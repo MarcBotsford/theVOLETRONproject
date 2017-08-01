@@ -163,6 +163,7 @@ void TA0_N_IRQHandler(void);
 void TA1_N_IRQHandler(void);
 void TA2_N_IRQHandler(void);
 void TA3_N_IRQHandler(void);
+void TIMER_default_callback(void);
 
 
 clkData_t TIMER_calculate_deviders(uint32_t period);

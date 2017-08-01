@@ -332,7 +332,9 @@ timerr_t TIMER_kill_raw(tim_t clk_chanel, uint8_t ccr_chanel){
         }
         TA_status[CLK_CHANEL_S] = cs_unused;
     }
-    TIMER_AG(CLK_CHANEL_H) ->CCTL[ccr_chanel] &= ~(CCIFG);
+    TIMER_AG(CLK_CHANEL_H) ->CCTL[ccr_chanel] &= ~(CCIE);
+    TA[CLK_CHANEL_S][ccr_chanel].callback = &TIMER_default_callback;
+    TIMER_pause(clk_chanel);
     return timer_no_error;
 }
 
@@ -585,4 +587,8 @@ void TA3_N_IRQHandler(void){
             }
         }
     }
+}
+
+void TIMER_default_callback(void){
+
 }

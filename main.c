@@ -22,15 +22,16 @@
     void test_callback1(void);
     void test_callback2();
     void test_callback3(void);
+    void beep(void);
 
     extern debounceData_t current_task_data[MAX_DEBOUNCE_THREADS];
     extern portisrDebounceDataLink_t port4_linkers;
     uint32_t k = 0;
+    uint8_t uca_soft_ifg = 0;
+
+    timerTaskid_t prelim_beep;
 
 void main(void){
-
-
-
 
 //    UART_initModule(EUSCI_A0_BASE, &test);
     uint32_t x = 0;
@@ -41,24 +42,17 @@ void main(void){
      * uart stuff~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~   v
      */
 
-    UART_disableModule (EUSCI_A0_BASE);
+
     UART_init(EUSCI_A0_BASE);
-    UART_enableModule(EUSCI_A0_BASE);
 
-    GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P1, GPIO_PIN3, GPIO_PRIMARY_MODULE_FUNCTION);
-    Interrupt_enableInterrupt(INT_EUSCIA0);
-    UART_enableInterrupt(EUSCI_A0_BASE, EUSCI_A_UART_TRANSMIT_INTERRUPT);
-    UCA0IFG = 0;
-    CS_setDCOCenteredFrequency(CS_DCO_FREQUENCY_12);
-    /*
-     * uart stuff~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~    ^
-     *                                                      |
-     */
+    P1DIR |= BIT7;
+    P1OUT &= ~BIT7;
 
-    P2DIR &= ~(BIT5);
+    P2DIR &= ~(BIT5 | BIT7);
     P2REN &= ~BIT5;
-//    P1OUT &= ~(BIT5);
-    P2IE |= BIT5;
+    P2REN |= BIT7;
+    P2OUT |= BIT7;
+    P2IE |= BIT5 | BIT7;
     P2IFG = 0;
     Interrupt_enableInterrupt(INT_PORT2);
 
@@ -67,11 +61,9 @@ void main(void){
     Interrupt_enableMaster();
 
 
-//    UART_transmitData(EUSCI_A0_BASE, 0xAA);
 
 
     while(1){
-//        UART_transmitData(EUSCI_A0_BASE, 0xFF);
 
         DEBOUNCE_repeater();
 
@@ -83,6 +75,7 @@ void main(void){
 void EUSCIA0_IRQHandler(){
     if(UCA0IFG & UCTXIFG){
         UCA0IFG = 0;
+        uca_soft_ifg = 1;
 
     }
     UCA0IFG = 0;
@@ -99,11 +92,43 @@ void test_callback1(void){
     P2OUT ^= BIT0;
 }
 void test_callback2(){
-    P2OUT ^= BIT1;
-    UART_transmitData(EUSCI_A0_BASE, 'A');
+//    P2OUT ^= BIT1;
+    UART_transmitData(EUSCI_A0_BASE, 'b');
+    while(uca_soft_ifg = 0);
+    uca_soft_ifg = 0;
+    UART_transmitData(EUSCI_A0_BASE, 'o');
+    while(uca_soft_ifg = 0);
+    uca_soft_ifg = 0;
+    UART_transmitData(EUSCI_A0_BASE, 'o');
+    while(uca_soft_ifg = 0);
+    uca_soft_ifg = 0;
+    UART_transmitData(EUSCI_A0_BASE, 'p');
+    uca_soft_ifg = 0;
+    UART_transmitData(EUSCI_A0_BASE, 0x0D);
+
+    if(!(P1OUT & BIT7))
+    P1OUT |= BIT7;
+    prelim_beep = TIMER_request(500, &beep);
 }
 void test_callback3(void){
-    P2OUT ^= BIT2;
+    P2OUT ^= BIT1;
+    UART_transmitData(EUSCI_A0_BASE, 'c');
+    while(uca_soft_ifg = 0);
+    uca_soft_ifg = 0;
+    UART_transmitData(EUSCI_A0_BASE, 'l');
+    while(uca_soft_ifg = 0);
+    uca_soft_ifg = 0;
+    UART_transmitData(EUSCI_A0_BASE, 'i');
+    while(uca_soft_ifg = 0);
+    uca_soft_ifg = 0;
+    UART_transmitData(EUSCI_A0_BASE, 'c');
+    while(uca_soft_ifg = 0);
+    uca_soft_ifg = 0;
+    UART_transmitData(EUSCI_A0_BASE, 'k');
+    while(uca_soft_ifg = 0);
+    uca_soft_ifg = 0;
+    UART_transmitData(EUSCI_A0_BASE, 0x0D);
+
 }
 
 
@@ -133,14 +158,21 @@ void PORT2_IRQHandler(void){
             && !(port4_linkers.flag & BIT5)){
         DEBOUNCE_request(2,BIT5,DB_RISING,&current_task_data, &port4_linkers, &test_callback2);
         P2IFG = 0;
-        k++;
-
+    }
+    if(P2IFG & BIT7
+            && !(port4_linkers.flag & BIT7)){
+        DEBOUNCE_request(2,BIT7,DB_RISING,&current_task_data,&port4_linkers, &test_callback3);
+        P2IFG = 0;
     }
     P2IFG = 0;
 }
 
 
-
+void beep(void){
+    P1OUT &=~(BIT7);
+    TIMER_kill(prelim_beep);
+//    TIMER_pause
+}
 
 
 
