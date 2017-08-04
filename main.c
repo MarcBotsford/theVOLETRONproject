@@ -33,17 +33,14 @@
 
 void main(void){
 
-//    UART_initModule(EUSCI_A0_BASE, &test);
     uint32_t x = 0;
 
     WDTCTL = WDTPW | WDTHOLD;
     TIMER_init();
-    /*                                                      |
-     * uart stuff~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~   v
-     */
 
+     UCA0IE |= UCTXIE;
 
-    UART_init(EUSCI_A0_BASE);
+    VUART_init(EUSCI_A0_BASE);
 
     P1DIR |= BIT7;
     P1OUT &= ~BIT7;
@@ -60,7 +57,8 @@ void main(void){
 
     Interrupt_enableMaster();
 
-
+    VUART_tx_string(UART_c0, "cats");
+//    VUART_tx_byte(UART_c0, 'p');
 
 
     while(1){
@@ -72,15 +70,7 @@ void main(void){
 
 
 
-void EUSCIA0_IRQHandler(){
-    if(UCA0IFG & UCTXIFG){
-        UCA0IFG = 0;
-        uca_soft_ifg = 1;
 
-    }
-    UCA0IFG = 0;
-
-}
 
 
 
@@ -92,42 +82,9 @@ void test_callback1(void){
     P2OUT ^= BIT0;
 }
 void test_callback2(){
-//    P2OUT ^= BIT1;
-    UART_transmitData(EUSCI_A0_BASE, 'b');
-    while(uca_soft_ifg = 0);
-    uca_soft_ifg = 0;
-    UART_transmitData(EUSCI_A0_BASE, 'o');
-    while(uca_soft_ifg = 0);
-    uca_soft_ifg = 0;
-    UART_transmitData(EUSCI_A0_BASE, 'o');
-    while(uca_soft_ifg = 0);
-    uca_soft_ifg = 0;
-    UART_transmitData(EUSCI_A0_BASE, 'p');
-    uca_soft_ifg = 0;
-    UART_transmitData(EUSCI_A0_BASE, 0x0D);
 
-    if(!(P1OUT & BIT7))
-    P1OUT |= BIT7;
-    prelim_beep = TIMER_request(500, &beep);
 }
 void test_callback3(void){
-    P2OUT ^= BIT1;
-    UART_transmitData(EUSCI_A0_BASE, 'c');
-    while(uca_soft_ifg = 0);
-    uca_soft_ifg = 0;
-    UART_transmitData(EUSCI_A0_BASE, 'l');
-    while(uca_soft_ifg = 0);
-    uca_soft_ifg = 0;
-    UART_transmitData(EUSCI_A0_BASE, 'i');
-    while(uca_soft_ifg = 0);
-    uca_soft_ifg = 0;
-    UART_transmitData(EUSCI_A0_BASE, 'c');
-    while(uca_soft_ifg = 0);
-    uca_soft_ifg = 0;
-    UART_transmitData(EUSCI_A0_BASE, 'k');
-    while(uca_soft_ifg = 0);
-    uca_soft_ifg = 0;
-    UART_transmitData(EUSCI_A0_BASE, 0x0D);
 
 }
 

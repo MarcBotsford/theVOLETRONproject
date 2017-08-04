@@ -44,7 +44,7 @@ typedef struct buf{
 
 
 /* Note, these functions can handle 8 bit data only*/
-cbStatus_t CIRCBUF_init(buf_t* buf, uint8_t len, uint8_t size);
+cbStatus_t CIRCBUF_init(buf_t* buf, uint8_t len);
 cbStatus_t CIRCBUF_push(buf_t* buf, cb_item8  data);
 cb_item8 CIRCBUF_pop(buf_t* buf);
 cbStatus_t CIRCBUF_read(buf_t* buf, void * data);

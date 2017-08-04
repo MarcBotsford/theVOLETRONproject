@@ -105,7 +105,7 @@ void DEBOUNCE_repeater(void){
     for(i = 0; i < MAX_DEBOUNCE_THREADS; i++){
         if(current_task_data[i].pending == db_pending){
             /*
-             * This is the part that does stuff based on the flag.
+             * This is the part that does stuff based .n the flag.
              */
             (*current_task_data[i].callback)();
             current_task_data[i].pending = db_not_pending;

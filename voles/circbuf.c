@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include "interrupt.h"
 
-cbStatus_t CIRCBUF_init(buf_t* buf, uint8_t len, uint8_t size) {
+cbStatus_t CIRCBUF_init(buf_t* buf, uint8_t len) {
 
     if (! buf){
         /* handle error if buf is not declared, NULL */
@@ -22,7 +22,6 @@ cbStatus_t CIRCBUF_init(buf_t* buf, uint8_t len, uint8_t size) {
 
     buf->len = len;
     buf->cnt = 0;
-
     buf->head = buf->buffer;
     buf->tail = buf->buffer;
 
@@ -38,6 +37,9 @@ cbStatus_t CIRCBUF_push(buf_t* buf, cb_item8  data){
     if(buf->cnt == buf->len){
         return cb_full;
     }
+
+    Interrupt_disableMaster();
+
     if(buf->cnt != 0){
     buf->head++;
     }
@@ -51,7 +53,7 @@ cbStatus_t CIRCBUF_push(buf_t* buf, cb_item8  data){
 
     buf -> cnt++;
 
-
+    Interrupt_enableMaster();
     return cb_no_error;
 }
 
@@ -65,9 +67,11 @@ cb_item8 CIRCBUF_pop(buf_t* buf){
     }
 
     if(buf->cnt == 0){
+        /* empty buffers cannot be popped from*/
         /* placeholder error, remember to make a better one*/
         while(1);
     }
+    Interrupt_disableMaster();
 
     data = *(buf->tail);
     if(buf->cnt != 1){
@@ -78,6 +82,7 @@ cb_item8 CIRCBUF_pop(buf_t* buf){
     }
 
     buf->cnt--;
+    Interrupt_enableMaster();
 
     return data;
 }
@@ -98,8 +103,10 @@ cbStatus_t CIRCBUF_read(buf_t* buf, void * data){
         /* handle error if buf is not declared, NULL */
        return cb_null_pointer;
     }
+    Interrupt_disableMaster();
 
     memcpy(data, buf->head, buf->item_size);
+    Interrupt_enableMaster();
     return cb_no_error;
 }
 

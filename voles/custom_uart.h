@@ -10,6 +10,7 @@
 
 #include "uart.h"
 #include "msp.h"
+#include "circbuf.h"
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  *
@@ -21,7 +22,9 @@ typedef enum uart_err{
     transmit_failure,
     recieve_failure,
     requested_EUSCI_module_buisy,
-    uart_unfinished_module
+    uart_unfinished_module,
+    uart_unusable_module,
+    uart_write_string_exeeds_buffer_length
 }uarterr_t;
 
 typedef enum uart_chanel{
@@ -31,18 +34,22 @@ typedef enum uart_chanel{
     UART_c3 = EUSCI_A3_BASE
 }uartchanel_t;
 
+#define UART_BUF_SIZE (15)
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  *
  *function deffinitions
  *
  *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-uarterr_t UART_tx_byte(uint8_t write_byte, uartchanel_t chanel);
-uarterr_t UART_tx_byte_n(uint8_t* write_bytes, uartchanel_t chanel, uint8_t byte_count);
-uarterr_t UART_rx_byte (uartchanel_t chanel);
-uarterr_t UART_set_baud(uint32_t baud, uartchanel_t chanel);
-uarterr_t UART_init(uartchanel_t chanel);
+uarterr_t VUART_tx_byte( uartchanel_t chanel, uint8_t write_byte);
+uarterr_t VUART_tx_byte_n(uint8_t* write_bytes, uartchanel_t chanel, uint8_t byte_count);
+uarterr_t VUART_rx_byte (uartchanel_t chanel);
+uarterr_t VUART_set_baud(uint32_t baud, uartchanel_t chanel);
+uarterr_t VUART_init(uartchanel_t chanel);
+uarterr_t VUART_tx_string(uartchanel_t chanel, uint8_t* write_string);
 
+void EUSCIA0_IRQHandler(void);
 
 
 
