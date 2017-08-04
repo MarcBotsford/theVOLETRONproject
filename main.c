@@ -38,7 +38,7 @@ void main(void){
     WDTCTL = WDTPW | WDTHOLD;
     TIMER_init();
 
-     UCA0IE |= UCTXIE;
+     UCA0IE |= UCTXIE | UCSTTIE;
 
     VUART_init(EUSCI_A0_BASE);
 
@@ -57,7 +57,7 @@ void main(void){
 
     Interrupt_enableMaster();
 
-    VUART_tx_string(UART_c0, "cats");
+    VUART_tx_string(UART_c0, "quintiscence\n\r");
 //    VUART_tx_byte(UART_c0, 'p');
 
 

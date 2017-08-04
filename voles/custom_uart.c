@@ -31,12 +31,11 @@ uarterr_t VUART_init(uartchanel_t chanel){
 
     UART_disableModule(chanel);
     UART_initModule(chanel, &std_uart_config);
-    UART_enableInterrupt(chanel, EUSCI_A_UART_TRANSMIT_INTERRUPT);
+    UART_enableModule(chanel);
     switch(chanel){
         case UART_c0:{
             GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P1, GPIO_PIN3 | GPIO_PIN2, GPIO_PRIMARY_MODULE_FUNCTION);
             Interrupt_enableInterrupt(INT_EUSCIA0);
-            UCA0IE |= UCTXIE;
             UCA0IFG = 0;
             break;
         }
@@ -60,7 +59,8 @@ uarterr_t VUART_init(uartchanel_t chanel){
             return uart_unfinished_module;
         }
     }
-    UART_enableModule(chanel);
+    UART_enableInterrupt(chanel, EUSCI_A_UART_TRANSMIT_INTERRUPT);
+//    UART_enableModule(chanel);
     CS_setDCOCenteredFrequency(CS_DCO_FREQUENCY_12);
 
     return uart_no_error;
@@ -105,18 +105,17 @@ uarterr_t VUART_tx_string(uartchanel_t chanel, uint8_t write_string[]){
     if(!uart_tx_buf[soft_chanel].buffer){
         CIRCBUF_init(&uart_tx_buf[soft_chanel],UART_BUF_SIZE);
     }
-    while(j <= 3){
-        if(write_string[j] = 0){
+    while(j <= UART_BUF_SIZE){
+        if(write_string[j] == 0){
             /*done*/
             CIRCBUF_push(&uart_tx_buf[soft_chanel],write_string[j]);
-            UART_transmitData(chanel, write_string[0]);
+            UART_transmitData(chanel, CIRCBUF_pop(&uart_tx_buf[soft_chanel]));
 
             return uart_no_error;
         }
         CIRCBUF_push(&uart_tx_buf[soft_chanel], write_string[j]);
         j++;
     }
-    UART_transmitData(chanel, write_string[0]);
     return uart_write_string_exeeds_buffer_length;
 }
 
