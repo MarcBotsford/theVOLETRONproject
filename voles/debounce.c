@@ -102,6 +102,7 @@ debounceerr_t DEBOUNCE_request(uint8_t port, uint8_t pin, edgetype_t edgetype, d
 
 void DEBOUNCE_repeater(void){
     uint8_t i;
+
     for(i = 0; i < MAX_DEBOUNCE_THREADS; i++){
         if(current_task_data[i].pending == db_pending){
             /*

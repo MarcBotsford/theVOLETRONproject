@@ -34,7 +34,15 @@ typedef enum uart_chanel{
     UART_c3 = EUSCI_A3_BASE
 }uartchanel_t;
 
-#define UART_BUF_SIZE (15)
+#define UART_BUF_SIZE (200)
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *
+ *preprocessor
+ *
+ *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+#define STR_ELEMENT_COUNT(x) (sizeof(x))
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  *
@@ -45,9 +53,9 @@ typedef enum uart_chanel{
 uarterr_t VUART_tx_byte( uartchanel_t chanel, uint8_t write_byte);
 uarterr_t VUART_tx_byte_n(uint8_t* write_bytes, uartchanel_t chanel, uint8_t byte_count);
 uarterr_t VUART_rx_byte (uartchanel_t chanel);
-uarterr_t VUART_set_baud(uint32_t baud, uartchanel_t chanel);
 uarterr_t VUART_init(uartchanel_t chanel);
-uarterr_t VUART_tx_string(uartchanel_t chanel, uint8_t* write_string);
+uarterr_t VUART_tx_string(uartchanel_t chanel, uint8_t* write_string, uint8_t length);
+uarterr_t VUART_tx_buf(uartchanel_t chanel, buf_t* write_buf, uint8_t length);
 
 void EUSCIA0_IRQHandler(void);
 

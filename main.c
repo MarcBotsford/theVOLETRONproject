@@ -26,12 +26,15 @@
 
     extern debounceData_t current_task_data[MAX_DEBOUNCE_THREADS];
     extern portisrDebounceDataLink_t port4_linkers;
+    extern buf_t uart_rx_buf[4];
+
+
     uint32_t k = 0;
     uint8_t uca_soft_ifg = 0;
 
     timerTaskid_t prelim_beep;
 
-void main(void){
+        void main(void){
 
     uint32_t x = 0;
 
@@ -40,10 +43,16 @@ void main(void){
 
      UCA0IE |= UCTXIE | UCSTTIE;
 
-    VUART_init(EUSCI_A0_BASE);
+    VUART_init(UART_c2);
+    VUART_init(UART_c0);
 
     P1DIR |= BIT7;
     P1OUT &= ~BIT7;
+
+    P1DIR &= ~BIT1;
+    P1REN |= BIT1;
+    P1OUT |= BIT1;
+    P1IE |= BIT1;
 
     P2DIR &= ~(BIT5 | BIT7);
     P2REN &= ~BIT5;
@@ -52,19 +61,41 @@ void main(void){
     P2IE |= BIT5 | BIT7;
     P2IFG = 0;
     Interrupt_enableInterrupt(INT_PORT2);
+    Interrupt_enableInterrupt(INT_PORT1);
 
     P2DIR |= BIT1;
 
+    P6DIR |= BIT0;
+    P6OUT |= BIT0;
+
     Interrupt_enableMaster();
 
-    VUART_tx_string(UART_c0, "quintiscence\n\r");
-//    VUART_tx_byte(UART_c0, 'p');
+    buf_t testbuf;
+    CIRCBUF_init(&testbuf, 5);
+    CIRCBUF_push(&testbuf, '0');
+    CIRCBUF_push(&testbuf, '0');
+    CIRCBUF_push(&testbuf, '0');
+    CIRCBUF_push(&testbuf, '0');
+
+//    RFID_ping(UART_c2);
+//    for(x=0;x<0x0000FFFF;x++);
+//    RFID_config_enable_internal_antenna(UART_c2);
+//    for(x=0;x<0x0000FFFF;x++);
+    RFID_config_the_example(UART_c2);
+    for(x=0;x<0x0000FFFF;x++);
+
 
 
     while(1){
 
-        DEBOUNCE_repeater();
+//        RFID_ssir(UART_c2);
+//        for(x=0;x<0xFFFF;x++){
 
+//        }
+        DEBOUNCE_repeater();
+        if(uart_rx_buf[2].cnt!= 0){
+            VUART_tx_byte(UART_c0,CIRCBUF_pop(&uart_rx_buf[2]));
+        }
     }
 }
 
@@ -75,11 +106,10 @@ void main(void){
 
 
 void test_callback(void){
-    P1OUT ^= BIT0;
-
+    RFID_xsir(UART_c2);
 }
 void test_callback1(void){
-    P2OUT ^= BIT0;
+
 }
 void test_callback2(){
 
@@ -130,24 +160,3 @@ void beep(void){
     TIMER_kill(prelim_beep);
 //    TIMER_pause
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

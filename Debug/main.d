@@ -24,11 +24,11 @@ main.obj: ../voles/doors.h
 main.obj: ../voles/logging.h
 main.obj: ../voles/pwm.h
 main.obj: ../voles/rfid.h
-main.obj: ../voles/rtc.h
-main.obj: ../voles/custom_uart.h
+main.obj: C:/repos/theVOLETRONproject/voles/custom_uart.h
 main.obj: C:/ti/ccsv7/ccs_base/arm/include/msp432_driverlib_3_21_00_05/driverlib/MSP432P4xx/uart.h
 main.obj: C:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.1.LTS/include/stdbool.h
 main.obj: C:/ti/ccsv7/ccs_base/arm/include/msp432_driverlib_3_21_00_05/driverlib/MSP432P4xx/eusci.h
+main.obj: ../voles/rtc.h
 main.obj: ../voles/VI.h
 main.obj: C:/ti/ccsv7/ccs_base/arm/include/msp432_driverlib_3_21_00_05/driverlib/MSP432P4xx/driverlib.h
 main.obj: C:/ti/ccsv7/ccs_base/arm/include/msp432_driverlib_3_21_00_05/driverlib/MSP432P4xx/adc14.h
@@ -83,11 +83,11 @@ C:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.1.LTS/include/_defs.h:
 ../voles/logging.h: 
 ../voles/pwm.h: 
 ../voles/rfid.h: 
-../voles/rtc.h: 
-../voles/custom_uart.h: 
+C:/repos/theVOLETRONproject/voles/custom_uart.h: 
 C:/ti/ccsv7/ccs_base/arm/include/msp432_driverlib_3_21_00_05/driverlib/MSP432P4xx/uart.h: 
 C:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.1.LTS/include/stdbool.h: 
 C:/ti/ccsv7/ccs_base/arm/include/msp432_driverlib_3_21_00_05/driverlib/MSP432P4xx/eusci.h: 
+../voles/rtc.h: 
 ../voles/VI.h: 
 C:/ti/ccsv7/ccs_base/arm/include/msp432_driverlib_3_21_00_05/driverlib/MSP432P4xx/driverlib.h: 
 C:/ti/ccsv7/ccs_base/arm/include/msp432_driverlib_3_21_00_05/driverlib/MSP432P4xx/adc14.h: 

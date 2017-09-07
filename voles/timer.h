@@ -134,7 +134,7 @@ typedef struct {
 #define CNT_PRD_MS (557/*.056*/)
 
 #define DEV_1MS (TIMER_DEV_40)
-#define CCR_1MS (100)
+#define CCR_1MS (300)
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  *

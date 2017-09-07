@@ -29,6 +29,7 @@ cbStatus_t CIRCBUF_init(buf_t* buf, uint8_t len) {
 }
 
 cbStatus_t CIRCBUF_push(buf_t* buf, cb_item8  data){
+    Interrupt_disableMaster();
     if (! buf){
         /* handle error if buf is not declared, NULL */
         return cb_null_pointer;
@@ -37,8 +38,8 @@ cbStatus_t CIRCBUF_push(buf_t* buf, cb_item8  data){
     if(buf->cnt == buf->len){
         return cb_full;
     }
+//    Interrupt_disableMaster();
 
-    Interrupt_disableMaster();
 
     if(buf->cnt != 0){
     buf->head++;
@@ -65,14 +66,13 @@ cb_item8 CIRCBUF_pop(buf_t* buf){
         /* placeholder error, remember to make a better one*/
         while(1);
     }
-
     if(buf->cnt == 0){
         /* empty buffers cannot be popped from*/
         /* placeholder error, remember to make a better one*/
-        while(1);
+//        while(1);
+        return 0x00;
     }
     Interrupt_disableMaster();
-
     data = *(buf->tail);
     if(buf->cnt != 1){
         buf->tail ++;
