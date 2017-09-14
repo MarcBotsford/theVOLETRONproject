@@ -70,7 +70,7 @@ cb_item8 CIRCBUF_pop(buf_t* buf){
         /* empty buffers cannot be popped from*/
         /* placeholder error, remember to make a better one*/
 //        while(1);
-        return 0x00;
+        return 0xFF;
     }
     Interrupt_disableMaster();
     data = *(buf->tail);

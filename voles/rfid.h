@@ -37,4 +37,6 @@ void RFID_xsir(uartchanel_t uart_rfid_chanel);
 void RFID_config_1_out_of_156_ppm(uartchanel_t uart_rfid_chanel);
 void RFID_config_agc_toggle(uartchanel_t uart_rfid_chanel);
 void RFID_config_ampm_toggle(uartchanel_t uart_rfid_chanel);
+void RFID_init(void);
+void RFID_parse(uint8_t uart_rfid_chaneln);
 #endif /* RFID_H_ */

@@ -28,23 +28,20 @@
     extern portisrDebounceDataLink_t port4_linkers;
     extern buf_t uart_rx_buf[4];
 
-
-    uint32_t k = 0;
-    uint8_t uca_soft_ifg = 0;
-
     timerTaskid_t prelim_beep;
 
-        void main(void){
+          void main(void){
 
     uint32_t x = 0;
 
     WDTCTL = WDTPW | WDTHOLD;
     TIMER_init();
-
-     UCA0IE |= UCTXIE | UCSTTIE;
-
+    RFID_init();
     VUART_init(UART_c2);
     VUART_init(UART_c0);
+
+    UCA0IE |= UCTXIE | UCSTTIE;
+
 
     P1DIR |= BIT7;
     P1OUT &= ~BIT7;
@@ -70,17 +67,9 @@
 
     Interrupt_enableMaster();
 
-    buf_t testbuf;
-    CIRCBUF_init(&testbuf, 5);
-    CIRCBUF_push(&testbuf, '0');
-    CIRCBUF_push(&testbuf, '0');
-    CIRCBUF_push(&testbuf, '0');
-    CIRCBUF_push(&testbuf, '0');
 
-//    RFID_ping(UART_c2);
-//    for(x=0;x<0x0000FFFF;x++);
-//    RFID_config_enable_internal_antenna(UART_c2);
-//    for(x=0;x<0x0000FFFF;x++);
+
+
     RFID_config_the_example(UART_c2);
     for(x=0;x<0x0000FFFF;x++);
 
@@ -93,9 +82,7 @@
 
 //        }
         DEBOUNCE_repeater();
-        if(uart_rx_buf[2].cnt!= 0){
-            VUART_tx_byte(UART_c0,CIRCBUF_pop(&uart_rx_buf[2]));
-        }
+        RFID_parse(2);
     }
 }
 

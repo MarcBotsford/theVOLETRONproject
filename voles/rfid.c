@@ -8,6 +8,8 @@
 #include "custom_uart.h"
 #include "circbuf.h"
 
+#define RPD_BUFF_LEN 100
+
 extern buf_t uart_rx_buf[4];
 
 buf_t rfid_preasent_tags[4];
@@ -62,25 +64,38 @@ void RFID_xsir(uartchanel_t uart_rfid_chanel){
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * manipulation of the buffers
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-void RFID_parse(uint8_t uart_rfid_chanel){
-    if(uart_rfid_chanel >3){
+void RFID_parse(uint8_t uart_rfid_chaneln){
+    if(uart_rfid_chaneln >3){
         /*
          * return error
          */
     }
     uint8_t i;
-    while(uart_rx_buf[uart_rfid_chanel].cnt){
-        if(CIRCBUF_pop(uart_rx_buf[uart_rfid_chanel,cnt]) == '['){
-            for(i=0; i<= 16; i++){
+    cb_item8 post_pop;
+    while(uart_rx_buf[uart_rfid_chaneln].cnt){
+        if(CIRCBUF_pop(&uart_rx_buf[uart_rfid_chaneln]) == '['){
+            while(post_pop != ','){
                 /*
                  * load uid into tags buffer (buffer which contains the uid of all tags in the corresponding read field.
                  */
+                post_pop = CIRCBUF_pop(&uart_rx_buf[uart_rfid_chaneln]);
+                if(post_pop != 0xFF && post_pop != ','){
+                    CIRCBUF_push(&rfid_preasent_tags[uart_rfid_chaneln], post_pop);
+                }
             }
         }
     }
+
     /*
-     * return success message
+     * return success message eventually
      */
+}
+
+void RFID_init(void){
+    uint8_t i;
+    for(i=0; i<4; i++){
+        CIRCBUF_init(&rfid_preasent_tags[i], RPD_BUFF_LEN);
+    }
 }
 
 
