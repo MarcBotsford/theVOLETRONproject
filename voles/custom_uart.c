@@ -7,12 +7,22 @@
 #include "custom_uart.h"
 #include "interrupt.h"
 #include "driverlib.h"
+#include "voles/timer.h"
 
 buf_t uart_rx_buf[4];
 buf_t uart_tx_buf[4];
 uint8_t tx_array_size[4];
 uint8_t tx_progress[4];
+UART_recieve_flg_t recieve_flg_rfid;     /*used for timeout functions when sending commands to perepherals over UART*/
 
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * internal function deffenitions
+ *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * functions
+ *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 uarterr_t VUART_init(uartchanel_t chanel){
     if(!(chanel == UART_c0 || chanel == UART_c1 || chanel == UART_c2 || chanel == UART_c3)){
@@ -142,6 +152,7 @@ uarterr_t VUART_tx_string(uartchanel_t chanel, uint8_t* write_string, uint8_t le
         j++;
     }
 //    Interrupt_enableMaster();
+
     return uart_write_string_exeeds_buffer_length;
 }
 
@@ -198,7 +209,7 @@ uarterr_t VUART_tx_buf(uartchanel_t chanel, buf_t* write_buf, uint8_t length){
     return uart_write_string_exeeds_buffer_length;
 }
 
-void EUSCIA0_IRQHandler  (void){
+void EUSCIA0_IRQHandler(void){
     uint_fast8_t flags = UCA0IFG;
     uint_fast8_t data;
     UCA0IFG = 0;
@@ -213,6 +224,7 @@ void EUSCIA0_IRQHandler  (void){
         }
     }
     if(flags & UCRXIFG){
+        recieve_flg_rfid |= CH0_RECIEVE_FLG;
         CIRCBUF_push(&uart_rx_buf[0], UART_receiveData(EUSCI_A0_BASE));
     }
 }
@@ -227,6 +239,7 @@ void EUSCIA2_IRQHandler(){
         }
     }
     if(flags & UCRXIFG){
+        recieve_flg_rfid |= CH2_RECIEVE_FLG;
         CIRCBUF_push(&uart_rx_buf[2], UART_receiveData(EUSCI_A2_BASE));
     }
 
@@ -242,8 +255,29 @@ void EUSCIA3_IRQHandler(){
         }
     }
     if(flags & UCRXIFG){
+        recieve_flg_rfid |= CH3_RECIEVE_FLG;
         CIRCBUF_push(&uart_rx_buf[3], UART_receiveData(EUSCI_A3_BASE));
     }
+}
+
+uartTimeout_t VUART_peripheral_response_timeout(uint16_t timeout_ms, UART_recieve_flg_t *flag_set, UART_recieve_flg_t msk){
+    *flag_set &= ~(msk | msk<<4);
+    TIMER_request(15, &VUART_timeout_callback);
+    while(!(*flag_set & msk) && !(*flag_set & (msk << 4))){
+        /* do nothing and wait */
+    }
+    if(!(*flag_set & msk)){
+        *flag_set &= ~msk;
+        return uart_timeout;
+    }
+    if(!(*flag_set & (msk << 4))){
+        *flag_set &= ~(msk << 4);
+        return uart_no_timeout;
+    }
+}
+
+void VUART_timeout_callback(void){
+    recieve_flg_rfid |= 0xF0;
 }
 
 

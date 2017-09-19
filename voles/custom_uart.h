@@ -34,6 +34,18 @@ typedef enum uart_chanel{
     UART_c3 = EUSCI_A3_BASE
 }uartchanel_t;
 
+typedef enum{
+    uart_timeout = 0,
+    uart_no_timeout
+}uartTimeout_t;
+
+typedef uint8_t UART_recieve_flg_t;
+
+#define CH0_RECIEVE_FLG 0x01
+#define CH1_RECIEVE_FLG 0x02
+#define CH2_RECIEVE_FLG 0x04
+#define CH3_RECIEVE_FLG 0x08
+
 #define UART_BUF_SIZE (200)
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -56,6 +68,8 @@ uarterr_t VUART_rx_byte (uartchanel_t chanel);
 uarterr_t VUART_init(uartchanel_t chanel);
 uarterr_t VUART_tx_string(uartchanel_t chanel, uint8_t* write_string, uint8_t length);
 uarterr_t VUART_tx_buf(uartchanel_t chanel, buf_t* write_buf, uint8_t length);
+void VUART_timeout_callback(void);
+uartTimeout_t VUART_peripheral_response_timeout(uint16_t timeout_ms, UART_recieve_flg_t *flag_set, UART_recieve_flg_t msk);
 
 void EUSCIA0_IRQHandler(void);
 
