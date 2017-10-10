@@ -12,10 +12,10 @@
 
 
 #if 0
-void (*callback_A0[7]) (void);
-void (*callback_A1[7]) (void);
-void (*callback_A2[7]) (void);
-void (*callback_A3[7]) (void);
+volatile void (*callback_A0[7]) (void);
+volatile void (*callback_A1[7]) (void);
+volatile void (*callback_A2[7]) (void);
+volatile void (*callback_A3[7]) (void);
 
 uint32_t cnt_A0[7];
 uint32_t cnt_A1[7];

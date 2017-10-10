@@ -9,15 +9,16 @@
 #include <stdlib.h>
 #include "gpio.h"
 #include "timer.h"
+#include "driverlib.h"
 
-debounceData_t current_task_data[MAX_DEBOUNCE_THREADS];
+volatile debounceData_t current_task_data[MAX_DEBOUNCE_THREADS];
 /*
 portisrDebounceDataLink_t port0_linkers;
 portisrDebounceDataLink_t port1_linkers;
 portisrDebounceDataLink_t port2_linkers;
 portisrDebounceDataLink_t port3_linkers;
 */
-portisrDebounceDataLink_t port4_linkers;
+volatile portisrDebounceDataLink_t port4_linkers;
 /*
 portisrDebounceDataLink_t port5_linkers;
 portisrDebounceDataLink_t port6_linkers;
@@ -25,6 +26,12 @@ portisrDebounceDataLink_t port7_linkers;
 portisrDebounceDataLink_t port8_linkers;
 */
 
+volatile timerTaskid_t db_timeout;
+
+/*
+ * internal functions
+ */
+void DEBOUNCE_timeout(void);
 
 
 
@@ -41,6 +48,7 @@ debounceerr_t DEBOUNCE_clear_data(debounceData_t* data, portisrDebounceDataLink_
 }
 
 void DEBOUNCE_callback(void){
+    Interrupt_disableMaster();
     if(current_task_data[0].id != dbUND){
         current_task_data[0].shift_reg = ((current_task_data[0].shift_reg << 1)|!GPIO_getInputPinValue(current_task_data[0].port,current_task_data[0].pin)|(0xE000));
         if(current_task_data[0].shift_reg == 0xF000){
@@ -50,7 +58,7 @@ void DEBOUNCE_callback(void){
 
     }
     if(current_task_data[1].id != dbUND){
-         current_task_data[1].shift_reg = (current_task_data[1].shift_reg << 1)|(GPIO_getInputPinValue(current_task_data[1].port,current_task_data[1].pin)|(0xE000));
+         current_task_data[1].shift_reg = ((current_task_data[1].shift_reg << 1)|!GPIO_getInputPinValue(current_task_data[1].port,current_task_data[1].pin)|(0xE000));
          if(current_task_data[1].shift_reg == 0xF000){
              current_task_data[1].pending  = db_pending;
              DEBOUNCE_clear_data(&current_task_data[1], current_task_data[1].linked_portisr);
@@ -72,6 +80,7 @@ void DEBOUNCE_callback(void){
              DEBOUNCE_clear_data(&current_task_data[3], current_task_data[3].linked_portisr);
          }
      }
+    Interrupt_enableMaster();
 }
 
 debounceerr_t DEBOUNCE_request(uint8_t port, uint8_t pin, edgetype_t edgetype, debounceData_t task_data_struct[],portisrDebounceDataLink_t* data_linker, void (*callback)(void)){
@@ -97,7 +106,13 @@ debounceerr_t DEBOUNCE_request(uint8_t port, uint8_t pin, edgetype_t edgetype, d
     data_linker->flag |= pin;
 //    data_linker->data_struct = task_data_struct[i];
     task_data_struct[i].linked_portisr = data_linker;
+//    db_timeout = TIMER_request(5000, &DEBOUNCE_timeout);
     return debounce_no_error;
+}
+
+void DEBOUNCE_timeout(void){
+    port4_linkers.flag = 0;
+    TIMER_kill(db_timeout);
 }
 
 void DEBOUNCE_repeater(void){

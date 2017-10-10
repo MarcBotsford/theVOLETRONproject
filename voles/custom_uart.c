@@ -9,11 +9,12 @@
 #include "driverlib.h"
 #include "voles/timer.h"
 
-buf_t uart_rx_buf[4];
-buf_t uart_tx_buf[4];
-uint8_t tx_array_size[4];
-uint8_t tx_progress[4];
-UART_recieve_flg_t recieve_flg_rfid;     /*used for timeout functions when sending commands to perepherals over UART*/
+volatile buf_t uart_rx_buf[4];
+volatile buf_t uart_tx_buf[4];
+volatile uint8_t tx_array_size[4];
+volatile uint8_t tx_progress[4];
+volatile UART_recieve_flg_t recieve_flg_rfid = 0;     /*used for timeout functions when sending commands to perepherals over UART*/
+volatile timerTaskid_t uart_timeout_id;
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * internal function deffenitions
@@ -130,7 +131,7 @@ uarterr_t VUART_tx_string(uartchanel_t chanel, uint8_t* write_string, uint8_t le
     }
     if(!uart_tx_buf[soft_chanel].buffer){
         /*error, there is no transmit buffer*/
-        while(1){
+        while(!uart_tx_buf[soft_chanel].buffer){
 
         }
     }
@@ -262,22 +263,24 @@ void EUSCIA3_IRQHandler(){
 
 uartTimeout_t VUART_peripheral_response_timeout(uint16_t timeout_ms, UART_recieve_flg_t *flag_set, UART_recieve_flg_t msk){
     *flag_set &= ~(msk | msk<<4);
-    TIMER_request(15, &VUART_timeout_callback);
+    uart_timeout_id = TIMER_request(15, &VUART_timeout_callback);
     while(!(*flag_set & msk) && !(*flag_set & (msk << 4))){
         /* do nothing and wait */
     }
+    TIMER_kill(uart_timeout_id);
     if(!(*flag_set & msk)){
-        *flag_set &= ~msk;
+        *flag_set &= ~msk<<4;
         return uart_timeout;
     }
     if(!(*flag_set & (msk << 4))){
-        *flag_set &= ~(msk << 4);
+        *flag_set &= ~(msk);
         return uart_no_timeout;
     }
 }
 
 void VUART_timeout_callback(void){
     recieve_flg_rfid |= 0xF0;
+    TIMER_kill(uart_timeout_id);
 }
 
 

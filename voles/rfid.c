@@ -37,6 +37,12 @@ void RFID_config_max_power_4to1mod(uartchanel_t uart_rfid_chanel){
 
 
 void RFID_config_enable_internal_antenna(uartchanel_t uart_rfid_chanel){
+    VUART_tx_string(uart_rfid_chanel, "01080003042A0000",16);
+    VUART_peripheral_response_timeout(15,& recieve_flg_rfid,CH2_RECIEVE_FLG);
+}
+
+void RFID_config_enable_external_antenna(uartchanel_t uart_rfid_chanel){
+
     VUART_tx_string(uart_rfid_chanel, "01080003042B0000",16);
     VUART_peripheral_response_timeout(15,& recieve_flg_rfid,CH2_RECIEVE_FLG);
 }
@@ -49,6 +55,8 @@ void RFID_config_the_example(uartchanel_t uart_rfid_chanel){
         VUART_peripheral_response_timeout(15,& recieve_flg_rfid,CH2_RECIEVE_FLG);
     VUART_tx_string(uart_rfid_chanel, "0109000304F1FF0000", sizeof("0109000304F1FF0000")-1);           //am/pm toggle
         VUART_peripheral_response_timeout(15,& recieve_flg_rfid,CH2_RECIEVE_FLG);
+//    VUART_tx_string(uart_rfid_chanel, "01080003042B0000",16);
+//        VUART_peripheral_response_timeout(15,& recieve_flg_rfid,CH2_RECIEVE_FLG);
 }
 
 void RFID_config_1_out_of_156_ppm(uartchanel_t uart_rfid_chanel){
@@ -72,7 +80,7 @@ void RFID_ssir(uartchanel_t uart_rfid_chanel){
 
 void RFID_xsir(uartchanel_t uart_rfid_chanel){
     VUART_tx_string(uart_rfid_chanel, "010B000304140401000000", sizeof("010B000304140401000000")-1);
-    VUART_peripheral_response_timeout(15,& recieve_flg_rfid,CH2_RECIEVE_FLG);
+//    VUART_peripheral_response_timeout(15,& recieve_flg_rfid,CH2_RECIEVE_FLG);
 }
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * manipulation of the buffers

@@ -58,6 +58,8 @@ main.obj: C:/ti/ccsv7/ccs_base/arm/include/msp432_driverlib_3_21_00_05/driverlib
 main.obj: C:/ti/ccsv7/ccs_base/arm/include/msp432_driverlib_3_21_00_05/driverlib/MSP432P4xx/timer32.h
 main.obj: C:/ti/ccsv7/ccs_base/arm/include/msp432_driverlib_3_21_00_05/driverlib/MSP432P4xx/timer_a.h
 main.obj: C:/ti/ccsv7/ccs_base/arm/include/msp432_driverlib_3_21_00_05/driverlib/MSP432P4xx/wdt_a.h
+main.obj: C:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.1.LTS/include/string.h
+main.obj: C:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.1.LTS/include/stdlib.h
 
 ../main.c: 
 C:/ti/ccsv7/ccs_base/arm/include/msp.h: 
@@ -117,3 +119,5 @@ C:/ti/ccsv7/ccs_base/arm/include/msp432_driverlib_3_21_00_05/driverlib/MSP432P4x
 C:/ti/ccsv7/ccs_base/arm/include/msp432_driverlib_3_21_00_05/driverlib/MSP432P4xx/timer32.h: 
 C:/ti/ccsv7/ccs_base/arm/include/msp432_driverlib_3_21_00_05/driverlib/MSP432P4xx/timer_a.h: 
 C:/ti/ccsv7/ccs_base/arm/include/msp432_driverlib_3_21_00_05/driverlib/MSP432P4xx/wdt_a.h: 
+C:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.1.LTS/include/string.h: 
+C:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.1.LTS/include/stdlib.h: 
