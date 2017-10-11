@@ -46,7 +46,7 @@ typedef uint8_t UART_recieve_flg_t;
 #define CH2_RECIEVE_FLG 0x04
 #define CH3_RECIEVE_FLG 0x08
 
-#define UART_BUF_SIZE (200)
+#define UART_BUF_SIZE (15)
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  *

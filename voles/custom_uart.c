@@ -10,7 +10,7 @@
 #include "voles/timer.h"
 
 volatile buf_t uart_rx_buf[4];
-volatile buf_t uart_tx_buf[4];
+ buf_t uart_tx_buf[4];
 volatile uint8_t tx_array_size[4];
 volatile uint8_t tx_progress[4];
 volatile UART_recieve_flg_t recieve_flg_rfid = 0;     /*used for timeout functions when sending commands to perepherals over UART*/
@@ -56,8 +56,12 @@ uarterr_t VUART_init(uartchanel_t chanel){
             break;
         }
         case UART_c1:{
-            /*pins not broken out, unusable on the msp432p401r*/
-            return uart_unusable_module;
+            GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P2, GPIO_PIN3,GPIO_PRIMARY_MODULE_FUNCTION);
+            Interrupt_enableInterrupt(INT_EUSCIA1);
+            UCA0IFG = 0;
+            CIRCBUF_init(&uart_rx_buf[1], UART_BUF_SIZE);
+            CIRCBUF_init(&uart_tx_buf[1], UART_BUF_SIZE);
+            break;
         }
         case UART_c2:{
             GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P3,GPIO_PIN3 | GPIO_PIN2,GPIO_PRIMARY_MODULE_FUNCTION);
@@ -113,8 +117,7 @@ uarterr_t VUART_tx_string(uartchanel_t chanel, uint8_t* write_string, uint8_t le
             break;
         }
         case UART_c1:{
-//            Interrupt_enableMaster();
-            return uart_unusable_module;
+            soft_chanel = 1;
         }
         case UART_c2:{
             soft_chanel = 2;
@@ -172,8 +175,7 @@ uarterr_t VUART_tx_buf(uartchanel_t chanel, buf_t* write_buf, uint8_t length){
             break;
         }
         case UART_c1:{
-//            Interrupt_enableMaster();
-            return uart_unusable_module;
+            soft_chanel = 1;
         }
         case UART_c2:{
             soft_chanel = 2;
@@ -228,6 +230,22 @@ void EUSCIA0_IRQHandler(void){
         recieve_flg_rfid |= CH0_RECIEVE_FLG;
         CIRCBUF_push(&uart_rx_buf[0], UART_receiveData(EUSCI_A0_BASE));
     }
+}
+void EUSCIA1_IRQHandler(){
+    uint_fast8_t flags = UCA1IFG;
+    uint_fast8_t data;
+    UCA1IFG = 0;
+    if(flags & UCTXIFG){
+        data = CIRCBUF_pop(&uart_tx_buf[1]);
+        if(uart_tx_buf[1].cnt){
+            UART_transmitData(EUSCI_A1_BASE, data);
+        }
+    }
+    if(flags & UCRXIFG){
+        recieve_flg_rfid |= CH1_RECIEVE_FLG;
+        CIRCBUF_push(&uart_rx_buf[1], UART_receiveData(EUSCI_A1_BASE));
+    }
+
 }
 void EUSCIA2_IRQHandler(){
     uint_fast8_t flags = UCA2IFG;

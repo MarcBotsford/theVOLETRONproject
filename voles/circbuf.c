@@ -15,7 +15,8 @@ cbStatus_t CIRCBUF_init(buf_t* buf, uint8_t len) {
         return cb_null_pointer;
     }
 
-    buf ->buffer = (cb_item8*) malloc(len * sizeof(cb_item8));
+    cb_item8 *temp = (cb_item8*) malloc(len * sizeof(cb_item8));
+    buf->buffer = temp;
     if(! buf -> buffer){
         return cb_malloc_failure;
     }

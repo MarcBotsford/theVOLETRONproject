@@ -43,8 +43,8 @@
     WDTCTL = WDTPW | WDTHOLD;
     TIMER_init();
     RFID_init();
-    VUART_init(UART_c2);
     VUART_init(UART_c0);
+    VUART_init(UART_c2);
 
     UCA0IE |= UCTXIE | UCSTTIE;
 
@@ -86,6 +86,7 @@
 
         DEBOUNCE_repeater();
         RFID_parse(2);
+        VUART_tx_string(UART_c0, "testing", 7);
     }
 }
 
