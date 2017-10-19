@@ -39,6 +39,8 @@
            void main(void){
 
     uint32_t x = 0;
+    uint8_t test_incrementer = 0;
+    extern volatile UART_recieve_flg_t recieve_flg_rfid;
 
     WDTCTL = WDTPW | WDTHOLD;
     TIMER_init();
@@ -73,8 +75,16 @@
 
     Interrupt_enableMaster();
 
+    while(1){
+//        VUART_peripheral_response_timeout(15,& recieve_flg_rfid,CH2_RECIEVE_FLG);
+        RFID_config_1_out_of_156_ppm(UART_c2);
+        test_incrementer++;
+        VUART_tx_byte(UART_c0, test_incrementer);
+    }
 
 
+
+    uint32_t k;
 
     RFID_config_the_example(UART_c2);
 //    for(x=0;x<0x0FFFE;x++);
@@ -86,7 +96,6 @@
 
         DEBOUNCE_repeater();
         RFID_parse(2);
-        VUART_tx_string(UART_c0, "testing", 7);
     }
 }
 

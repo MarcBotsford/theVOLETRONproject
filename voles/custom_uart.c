@@ -10,7 +10,7 @@
 #include "voles/timer.h"
 
 volatile buf_t uart_rx_buf[4];
- buf_t uart_tx_buf[4];
+volatile buf_t uart_tx_buf[4];
 volatile uint8_t tx_array_size[4];
 volatile uint8_t tx_progress[4];
 volatile UART_recieve_flg_t recieve_flg_rfid = 0;     /*used for timeout functions when sending commands to perepherals over UART*/
@@ -51,24 +51,24 @@ uarterr_t VUART_init(uartchanel_t chanel){
             GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P1, GPIO_PIN3 | GPIO_PIN2, GPIO_PRIMARY_MODULE_FUNCTION);
             Interrupt_enableInterrupt(INT_EUSCIA0);
             UCA0IFG = 0;
-            CIRCBUF_init(&uart_rx_buf[0], UART_BUF_SIZE);
-            CIRCBUF_init(&uart_tx_buf[0],UART_BUF_SIZE);
+//            CIRCBUF_init(&uart_rx_buf[0], UART_BUF_SIZE_RX);
+            CIRCBUF_init(&uart_tx_buf[0],UART_BUF_SIZE_TX_LOG);
             break;
         }
         case UART_c1:{
             GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P2, GPIO_PIN3,GPIO_PRIMARY_MODULE_FUNCTION);
             Interrupt_enableInterrupt(INT_EUSCIA1);
             UCA0IFG = 0;
-            CIRCBUF_init(&uart_rx_buf[1], UART_BUF_SIZE);
-            CIRCBUF_init(&uart_tx_buf[1], UART_BUF_SIZE);
+            CIRCBUF_init(&uart_rx_buf[1], UART_BUF_SIZE_RX);
+            CIRCBUF_init(&uart_tx_buf[1], UART_BUF_SIZE_TX);
             break;
         }
         case UART_c2:{
             GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P3,GPIO_PIN3 | GPIO_PIN2,GPIO_PRIMARY_MODULE_FUNCTION);
             Interrupt_enableInterrupt(INT_EUSCIA2);
             UCA2IFG = 0;
-            CIRCBUF_init(&uart_rx_buf[2], UART_BUF_SIZE);
-            CIRCBUF_init(&uart_tx_buf[2],UART_BUF_SIZE);
+            CIRCBUF_init(&uart_rx_buf[2], UART_BUF_SIZE_RX);
+            CIRCBUF_init(&uart_tx_buf[2],UART_BUF_SIZE_TX);
 
             break;
         }
@@ -76,8 +76,8 @@ uarterr_t VUART_init(uartchanel_t chanel){
             GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P9, GPIO_PIN6 | GPIO_PIN7, GPIO_PRIMARY_MODULE_FUNCTION);
             Interrupt_enableInterrupt(INT_EUSCIA2);
             UCA3IFG = 0;
-            CIRCBUF_init(&uart_rx_buf[3], UART_BUF_SIZE);
-            CIRCBUF_init(&uart_tx_buf[3],UART_BUF_SIZE);
+            CIRCBUF_init(&uart_rx_buf[3], UART_BUF_SIZE_RX);
+            CIRCBUF_init(&uart_tx_buf[3],UART_BUF_SIZE_TX);
 
             break;
         }
@@ -102,6 +102,7 @@ uarterr_t VUART_tx_byte( uartchanel_t chanel, uint8_t write_byte){
 }
 
 uarterr_t VUART_tx_string(uartchanel_t chanel, uint8_t* write_string, uint8_t length){
+
     uint_fast8_t soft_chanel;
     uint_fast8_t j = 0;
     if(!write_string){
@@ -109,7 +110,6 @@ uarterr_t VUART_tx_string(uartchanel_t chanel, uint8_t* write_string, uint8_t le
         while (1);
     }
 
-//    Interrupt_disableMaster();
 
     switch(chanel){
         case UART_c0:{
@@ -128,7 +128,6 @@ uarterr_t VUART_tx_string(uartchanel_t chanel, uint8_t* write_string, uint8_t le
             break;
         }
         default:{
-//            Interrupt_enableMaster();
             return transmit_failure;
         }
     }
@@ -142,29 +141,31 @@ uarterr_t VUART_tx_string(uartchanel_t chanel, uint8_t* write_string, uint8_t le
         /*error, somethings aready being tansmitted.*/
 //        while(1);
     }
-    tx_array_size[soft_chanel] = length;
 
-    while(j <= UART_BUF_SIZE){
+    tx_array_size[soft_chanel] = length;
+    while(j <= UART_BUF_SIZE_TX){
         if(j == length){
             /*done*/
+
             CIRCBUF_push(&uart_tx_buf[soft_chanel],write_string[j]);
             UART_transmitData(chanel, CIRCBUF_pop(&uart_tx_buf[soft_chanel]));
-//            Interrupt_enableMaster();
+
+//            UART_transmitData(chanel, 'a');
             return uart_no_error;
         }
         CIRCBUF_push(&uart_tx_buf[soft_chanel], write_string[j]);
         j++;
     }
-//    Interrupt_enableMaster();
-
     return uart_write_string_exeeds_buffer_length;
+
 }
 
 uarterr_t VUART_tx_buf(uartchanel_t chanel, buf_t* write_buf, uint8_t length){
+
     uint_fast8_t soft_chanel;
     uint_fast8_t j = 0;
 
-//    Interrupt_disableMaster();
+
     if(!write_buf->buffer){
         /*null buffer error*/
         while(1);
@@ -186,7 +187,6 @@ uarterr_t VUART_tx_buf(uartchanel_t chanel, buf_t* write_buf, uint8_t length){
             break;
         }
         default:{
-//            Interrupt_enableMaster();
             return transmit_failure;
         }
     }
@@ -198,17 +198,15 @@ uarterr_t VUART_tx_buf(uartchanel_t chanel, buf_t* write_buf, uint8_t length){
         /*error, somethings aready being tansmitted.*/
         while(1);
     }
-    while(j <= UART_BUF_SIZE){
+    while(j <= UART_BUF_SIZE_TX){
         if(!write_buf->cnt){
             /*done*/
             UART_transmitData(chanel, CIRCBUF_pop(&uart_tx_buf[soft_chanel]));
-//            Interrupt_enableMaster();
             return uart_no_error;
         }
         CIRCBUF_push(&uart_tx_buf[soft_chanel], CIRCBUF_pop(write_buf));
         j++;
     }
-//    Interrupt_enableMaster();
     return uart_write_string_exeeds_buffer_length;
 }
 
@@ -282,6 +280,7 @@ void EUSCIA3_IRQHandler(){
 uartTimeout_t VUART_peripheral_response_timeout(uint16_t timeout_ms, UART_recieve_flg_t *flag_set, UART_recieve_flg_t msk){
     *flag_set &= ~(msk | msk<<4);
     uart_timeout_id = TIMER_request(15, &VUART_timeout_callback);
+
     while(!(*flag_set & msk) && !(*flag_set & (msk << 4))){
         /* do nothing and wait */
     }
