@@ -34,7 +34,7 @@
     volatile uint8_t cb_ctr_debug_deboucne = 0;
     timerTaskid_t prelim_beep;
 
-    volatile uint8_t test_cnt;
+    volatile uint8_t test_cnt = 0;
 
            void main(void){
 
@@ -79,7 +79,8 @@
 //        VUART_peripheral_response_timeout(15,& recieve_flg_rfid,CH2_RECIEVE_FLG);
         RFID_config_1_out_of_156_ppm(UART_c2);
         test_incrementer++;
-        VUART_tx_byte(UART_c0, test_incrementer);
+        test_cnt++;
+//        VUART_tx_byte(UART_c0, test_incrementer);
     }
 
 

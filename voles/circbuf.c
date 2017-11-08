@@ -37,6 +37,10 @@ cbStatus_t CIRCBUF_push(buf_t* buf, cb_item8  data){
 
     if(buf->cnt == buf->len){
         return cb_full;
+        while(1);
+    }
+    if(buf->head == buf->buffer + 25){
+        while(1);
     }
 //    Interrupt_disableMaster();
 
@@ -50,6 +54,7 @@ cbStatus_t CIRCBUF_push(buf_t* buf, cb_item8  data){
     }
 
      *(buf->head) = data;
+
 
 
     buf -> cnt++;

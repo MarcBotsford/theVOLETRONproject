@@ -293,6 +293,7 @@ uartTimeout_t VUART_peripheral_response_timeout(uint16_t timeout_ms, UART_reciev
         *flag_set &= ~(msk);
         return uart_no_timeout;
     }
+//    while(1);
 }
 
 void VUART_timeout_callback(void){
