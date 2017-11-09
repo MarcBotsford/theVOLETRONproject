@@ -47,7 +47,7 @@ cbStatus_t CIRCBUF_push(buf_t* buf, cb_item8  data){
     buf->head++;
     }
 
-    if(buf->head == buf->buffer+25){
+    if(buf->head == buf->buffer + buf->len){
         buf -> head = buf -> buffer;
     }
 
@@ -81,7 +81,7 @@ cb_item8 CIRCBUF_pop(buf_t* buf){
     if(buf->cnt != 1){
         buf->tail ++;
     }
-    if(buf->tail == buf->buffer){
+    if(buf->tail == buf->buffer + buf->len){
         buf-> tail = buf -> buffer;
     }
 
