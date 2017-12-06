@@ -36,11 +36,16 @@
 
     volatile uint8_t test_cnt = 0;
 
+
+
+
            void main(void){
 
     uint32_t x = 0;
     uint8_t test_incrementer = 0;
     extern volatile UART_recieve_flg_t recieve_flg_rfid;
+
+    /*initialization*/
 
     WDTCTL = WDTPW | WDTHOLD;
     TIMER_init();
@@ -62,7 +67,7 @@
     P2DIR &= ~(BIT5 | BIT7);
     P2REN &= ~BIT5;
     P2REN |= BIT7;
-    P2OUT |= BIT7;
+    P2OUT &= ~BIT7;
     P2IE |= BIT5 | BIT7;
     P2IFG = 0;
     Interrupt_enableInterrupt(INT_PORT2);
@@ -74,30 +79,26 @@
     P6OUT |= BIT0;
 
     Interrupt_enableMaster();
-#ifdef TIMER_TESTING
-    while(1){
-//        VUART_peripheral_response_timeout(15,& recieve_flg_rfid,CH2_RECIEVE_FLG);
-        RFID_config_1_out_of_156_ppm(UART_c2);
-        test_incrementer++;
-        test_cnt++;
-//        VUART_tx_byte(UART_c0, test_incrementer);
-    }
-#endif
 
 
 
     uint32_t k;
 
+    /*initialize the RFID reader*/
+
     RFID_config_the_example(UART_c2);
 //    for(x=0;x<0x0FFFE;x++);
-//    RFID_config_enable_external_antenna(UART_c2);
+    RFID_config_enable_external_antenna(UART_c2);
 
     TIMER_request(1000, &test_callback1);
+
+    /*main loop*/
 
     while(1){
 
         DEBOUNCE_repeater();
         RFID_parse(2);
+
     }
 }
 
@@ -109,7 +110,6 @@
 
 void test_callback(void){
     RFID_xsir(UART_c2);
-    cb_ctr_debug_deboucne++;
 }
 void test_callback1(void){
     RFID_xsir(UART_c2);
@@ -128,11 +128,11 @@ void PORT1_IRQHandler(void){
     Interrupt_disableMaster();
     uint8_t temp = P1IFG;
     P1IFG = 0;
-    if(temp & BIT1){
-//            && !(port4_linkers.flag & BIT1)){
-//        (temp &= ~(BIT1));
-//        DEBOUNCE_request(1, BIT1, DB_RISING, &current_task_data, &port4_linkers, &test_callback);
-        RFID_xsir(UART_c2);
+    if(temp & BIT1
+            && !(port4_linkers.flag & BIT1)){
+        (temp &= ~(BIT1));
+        DEBOUNCE_request(1, BIT1, DB_RISING, &current_task_data, &port4_linkers, &test_callback);
+//        RFID_xsir(UART_c2);
     }
     if(temp & BIT4
             && !(port4_linkers.flag & BIT4)){
