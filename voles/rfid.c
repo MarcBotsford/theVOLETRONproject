@@ -7,13 +7,14 @@
 #include "rfid.h"
 #include "custom_uart.h"
 #include "circbuf.h"
+#include <stdlib.h>
 
 #define RPD_BUFF_LEN 100
 
 extern buf_t uart_rx_buf[4];
 extern UART_recieve_flg_t recieve_flg_rfid;
 
-buf_t rfid_preasent_tags[4];
+uint64_t rfid_preasent_tags[4][1] = {{0},{0},{0},{0}};   /*for the moment this name is a misnomer. it's actually the most recently read tag*/
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * internal function definitions
@@ -91,8 +92,12 @@ void RFID_parse(uint8_t uart_rfid_chaneln){
          * return error
          */
     }
-    uint8_t i;
+    uint8_t i = 0;
     cb_item8 post_pop;
+    uint64_t temp_RFID = 0;
+    char id_array[17] = {}; /*17 because each tag has a 16 nybble code, plus there's a zero at the end to make strtoull work*/
+    id_array[16] = 0;
+
     while(uart_rx_buf[uart_rfid_chaneln].cnt){
         if(CIRCBUF_pop(&uart_rx_buf[uart_rfid_chaneln]) == '['){
             while(post_pop != ','){
@@ -100,8 +105,12 @@ void RFID_parse(uint8_t uart_rfid_chaneln){
                  * load uid into tags buffer (buffer which contains the uid of all tags in the corresponding read field.
                  */
                 post_pop = CIRCBUF_pop(&uart_rx_buf[uart_rfid_chaneln]);
-                if(post_pop != 0xFF /*&& post_pop != ','*/){
-                    CIRCBUF_push(&rfid_preasent_tags[uart_rfid_chaneln], post_pop);
+                if(post_pop != 0xFF && post_pop != ','){
+                    id_array[i] = post_pop;
+                    ++i;
+                    if(i == 16){
+                        rfid_preasent_tags[2][0] = strtoull(id_array,NULL,16);
+                    }
                 }
             }
         }

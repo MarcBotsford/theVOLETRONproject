@@ -156,6 +156,7 @@ uarterr_t VUART_tx_string(uartchanel_t chanel, uint8_t* write_string, uint8_t le
         CIRCBUF_push(&uart_tx_buf[soft_chanel], write_string[j]);
         j++;
     }
+//    TIMER_A0 -> CTL &= ~(TAIFG);                                               /*This is for debugging. for the love of god don't just roll with code this duct tapeish*/
     return uart_write_string_exeeds_buffer_length;
 
 }

@@ -30,6 +30,7 @@
     extern debounceData_t current_task_data[MAX_DEBOUNCE_THREADS];
     extern portisrDebounceDataLink_t port4_linkers;
     extern buf_t uart_rx_buf[4];
+    extern uint64_t rfid_preasent_tags[4][1];
 
     volatile uint8_t cb_ctr_debug_deboucne = 0;
     timerTaskid_t prelim_beep;
@@ -40,6 +41,7 @@
 
 
            void main(void){
+               int i;
 
     uint32_t x = 0;
     uint8_t test_incrementer = 0;
@@ -63,6 +65,9 @@
     P1REN |= BIT1;
     P1OUT |= BIT1;
     P1IE |= BIT1;
+    /*red LED jank innit*/
+    P1DIR |= BIT0;
+    P1OUT &= ~BIT0;
 
     P2DIR &= ~(BIT5 | BIT7);
     P2REN &= ~BIT5;
@@ -74,6 +79,7 @@
     Interrupt_enableInterrupt(INT_PORT1);
 
     P2DIR |= BIT1;
+    P2OUT &= ~BIT1;
 
     P6DIR |= BIT0;
     P6OUT |= BIT0;
@@ -92,12 +98,40 @@
 
     TIMER_request(1000, &test_callback1);
 
+    for(i=0;i<=3;i++){
+        rfid_preasent_tags[i][0] = 0;
+    }
+
     /*main loop*/
+#define DEM
+#ifdef DEM
+    uint64_t tag0 = 0;
+    uint64_t tag1 = 0;
+#endif
+
 
     while(1){
-
         DEBOUNCE_repeater();
         RFID_parse(2);
+
+
+
+
+//        if(rfid_preasent_tags[2][0] && !tag0 && tag0 != tag1){
+//            tag0 = rfid_preasent_tags[2][0];
+//        }
+//        if(!tag1 && rfid_preasent_tags[2][0] != tag0){
+//            tag1 = rfid_preasent_tags[2][0];
+//        }
+//        if(rfid_preasent_tags[2][0] == tag0 && tag0){
+//            P1OUT |= BIT0;
+//            P2OUT &= ~BIT1;
+//        }
+//        if(rfid_preasent_tags[2][0] == tag1 && tag1){
+//            P1OUT &=~ BIT0;
+//            P2OUT |= BIT1;
+//        }
+
 
     }
 }
