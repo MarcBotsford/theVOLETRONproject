@@ -96,7 +96,7 @@
 //    for(x=0;x<0x0FFFE;x++);
     RFID_config_enable_external_antenna(UART_c2);
 
-    TIMER_request(1000, &test_callback1);
+    TIMER_request(1200, &test_callback1);
 
     for(i=0;i<=3;i++){
         rfid_preasent_tags[i][0] = 0;
