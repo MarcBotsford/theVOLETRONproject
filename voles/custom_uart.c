@@ -246,6 +246,8 @@ void EUSCIA1_IRQHandler(){
     }
 
 }
+#ifndef RESERVE_EUSCIA2_FOR_RFID
+
 void EUSCIA2_IRQHandler(){
     uint_fast8_t flags = UCA2IFG;
     uint_fast8_t data;
@@ -262,6 +264,8 @@ void EUSCIA2_IRQHandler(){
     }
 
 }
+
+#endif
 void EUSCIA3_IRQHandler(){
     uint_fast8_t flags = UCA3IFG;
     uint_fast8_t data;
@@ -301,5 +305,18 @@ void VUART_timeout_callback(void){
     recieve_flg_rfid |= 0xF0;
     TIMER_kill(uart_timeout_id);
 }
+
+
+#ifdef RESERVE_EUSCIA2_FOR_RFID
+void EUSCIA2_IRQHandler(){
+    uint_fast8_t flags = UCA2IFG;
+    UCA2IFG = 0;
+
+    if(flags & UCTXIFG){
+
+    }
+
+}
+#endif
 
 

@@ -1,7 +1,7 @@
 //*****************************************************************************
+//Neslon Botsford
 //
-// Botsford
-//
+//Main implementation for Vole operant "voletron" test cage.
 //          o   o
 //            |
 //        \_______/
@@ -50,6 +50,8 @@
     /*initialization*/
 
     WDTCTL = WDTPW | WDTHOLD;
+
+
     TIMER_init();
     RFID_init();
     VUART_init(UART_c0);
@@ -57,7 +59,7 @@
 
     UCA0IE |= UCTXIE | UCSTTIE;
 
-
+/*initialize gpio port 1*/
     P1DIR |= BIT7;
     P1OUT &= ~BIT7;
 
@@ -65,7 +67,7 @@
     P1REN |= BIT1;
     P1OUT |= BIT1;
     P1IE |= BIT1;
-    /*red LED jank innit*/
+    /*red LED register level initialization*/
     P1DIR |= BIT0;
     P1OUT &= ~BIT0;
 
@@ -75,14 +77,15 @@
     P2OUT &= ~BIT7;
     P2IE |= BIT5 | BIT7;
     P2IFG = 0;
-    Interrupt_enableInterrupt(INT_PORT2);
-    Interrupt_enableInterrupt(INT_PORT1);
 
     P2DIR |= BIT1;
     P2OUT &= ~BIT1;
 
     P6DIR |= BIT0;
     P6OUT |= BIT0;
+/*interrupt initialization*/
+    Interrupt_enableInterrupt(INT_PORT2);
+    Interrupt_enableInterrupt(INT_PORT1);
 
     Interrupt_enableMaster();
 
@@ -90,7 +93,7 @@
 
     uint32_t k;
 
-    /*initialize the RFID reader*/
+    /*initialize the RFID reader with ISO 15693 protocol, enable external antenna, and begin polling*/
 
     RFID_config_the_example(UART_c2);
 //    for(x=0;x<0x0FFFE;x++);
@@ -115,22 +118,22 @@
         RFID_parse(2);
 
 
+/*repeatedly update location of vole.*/
 
-
-//        if(rfid_preasent_tags[2][0] && !tag0 && tag0 != tag1){
-//            tag0 = rfid_preasent_tags[2][0];
-//        }
-//        if(!tag1 && rfid_preasent_tags[2][0] != tag0){
-//            tag1 = rfid_preasent_tags[2][0];
-//        }
-//        if(rfid_preasent_tags[2][0] == tag0 && tag0){
-//            P1OUT |= BIT0;
-//            P2OUT &= ~BIT1;
-//        }
-//        if(rfid_preasent_tags[2][0] == tag1 && tag1){
-//            P1OUT &=~ BIT0;
-//            P2OUT |= BIT1;
-//        }
+        if(rfid_preasent_tags[2][0] && !tag0 && tag0 != tag1){
+            tag0 = rfid_preasent_tags[2][0];
+        }
+        if(!tag1 && rfid_preasent_tags[2][0] != tag0){
+            tag1 = rfid_preasent_tags[2][0];
+        }
+        if(rfid_preasent_tags[2][0] == tag0 && tag0){
+            P1OUT |= BIT0;
+            P2OUT &= ~BIT1;
+        }
+        if(rfid_preasent_tags[2][0] == tag1 && tag1){
+            P1OUT &=~ BIT0;
+            P2OUT |= BIT1;
+        }
 
 
     }

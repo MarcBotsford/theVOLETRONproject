@@ -114,6 +114,13 @@ void RFID_parse(uint8_t uart_rfid_chaneln){
                 }
             }
         }
+        /*
+         *  my proposed changes:
+         *      I need this to detect the absence of a perticular tag, not only th epresence of some arbitrary tag;
+         *      I will start by parsing the string to find the beginning of the ISO15693 standard formatted tag thingy.
+         *      it'll check each slot noting the UID of tags as it finds them. then it'll compare the list to those
+         *      already in the RFID_PREASENT_TAGS buffer, to see what should be added removed or remain the same.
+         * */
     }
 
     /*
